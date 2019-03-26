@@ -29,9 +29,11 @@ namespace GradoService.Infrastructure.Services
                         + _externalAuthApiConfig.Value.AuthenticationStatusPath
                         + "?token=" + token;
 
-            var response = await _httpClient.GetStringAsync(query);
+            var response = await _httpClient.GetAsync(query);
 
-            var jObject = JObject.Parse(response);
+            HandleResponseExceptions(response);
+
+            var jObject = JObject.Parse(response.Content.ReadAsStringAsync().Result);
 
             return new AuthenticatedResultModel()
             {
@@ -54,7 +56,7 @@ namespace GradoService.Infrastructure.Services
 
             var response = await _httpClient.PostAsync(query, httpContent);
 
-            return HandleAuthenticateResponse(response);
+            return GetAuthorizeModelFromResponse(response);
         }
 
         public async Task<AuthorizeResultModel> RefreshTokenAsync(string refreshToken)
@@ -65,15 +67,12 @@ namespace GradoService.Infrastructure.Services
 
             var response = await _httpClient.GetAsync(query);
 
-            return HandleAuthenticateResponse(response);
+            return GetAuthorizeModelFromResponse(response);
         }
 
-        private AuthorizeResultModel HandleAuthenticateResponse(HttpResponseMessage response)
+        private AuthorizeResultModel GetAuthorizeModelFromResponse(HttpResponseMessage response)
         {
-            if (response.StatusCode == HttpStatusCode.Unauthorized)
-            {
-                throw new InvalidAuthenticationException();
-            }
+            HandleResponseExceptions(response);
 
             var responseJObject = JObject.Parse(response.Content.ReadAsStringAsync().Result);
 
@@ -83,6 +82,18 @@ namespace GradoService.Infrastructure.Services
                 RefreshToken = responseJObject["refreshToken"].Value<string>(),
                 LiveTime = responseJObject["ttl"].Value<int>()
             };
+        }
+
+        /// <summary>
+        /// Look at response http status and if it is not OK threw an exception
+        /// </summary>
+        /// <param name="response">Http response</param>
+        private void HandleResponseExceptions(HttpResponseMessage response)
+        {
+            if (response.StatusCode != HttpStatusCode.OK)
+            {
+                throw new HttpAuthenticationException(response.Content.ReadAsStringAsync().Result, response.StatusCode);
+            }
         }
     }
 }

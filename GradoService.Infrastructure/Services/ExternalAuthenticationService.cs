@@ -29,9 +29,11 @@ namespace GradoService.Infrastructure.Services
                         + _externalAuthApiConfig.Value.AuthenticationStatusPath
                         + "?token=" + token;
 
-            var response = await _httpClient.GetStringAsync(query);
+            var response = await _httpClient.GetAsync(query);
 
-            var jObject = JObject.Parse(response);
+            HandleResponseExceptions(response);
+
+            var jObject = JObject.Parse(response.Content.ReadAsStringAsync().Result);
 
             return new AuthenticatedResultModel()
             {
@@ -54,10 +56,23 @@ namespace GradoService.Infrastructure.Services
 
             var response = await _httpClient.PostAsync(query, httpContent);
 
-            if (response.StatusCode == HttpStatusCode.Unauthorized)
-            {
-                throw new InvalidAuthenticationException();
-            }
+            return GetAuthorizeModelFromResponse(response);
+        }
+
+        public async Task<AuthorizeResultModel> RefreshTokenAsync(string refreshToken)
+        {
+            var query = _externalAuthApiConfig.Value.AuthApiUrl
+                        + _externalAuthApiConfig.Value.RefreshTokenPath
+                        + "?refreshToken=" + refreshToken;
+
+            var response = await _httpClient.GetAsync(query);
+
+            return GetAuthorizeModelFromResponse(response);
+        }
+
+        private AuthorizeResultModel GetAuthorizeModelFromResponse(HttpResponseMessage response)
+        {
+            HandleResponseExceptions(response);
 
             var responseJObject = JObject.Parse(response.Content.ReadAsStringAsync().Result);
 
@@ -69,9 +84,16 @@ namespace GradoService.Infrastructure.Services
             };
         }
 
-        public Task<AuthorizeResultModel> RefreshTokenAsync(string refreshToken)
+        /// <summary>
+        /// Look at response http status and if it is not OK threw an exception
+        /// </summary>
+        /// <param name="response">Http response</param>
+        private void HandleResponseExceptions(HttpResponseMessage response)
         {
-            throw new NotImplementedException();
+            if (response.StatusCode != HttpStatusCode.OK)
+            {
+                throw new HttpAuthenticationException(response.Content.ReadAsStringAsync().Result, response.StatusCode);
+            }
         }
     }
 }

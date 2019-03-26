@@ -42,7 +42,9 @@ namespace GradoService.WebUI.Controllers
         [HttpGet("token/refresh")]
         public async Task<JsonResult> GetRefreshToken([FromQuery] string refreshToken)
         {
-            throw new NotImplementedException();
+            var refreshTokenResult = await _authenticationService.RefreshTokenAsync(refreshToken);
+
+            return new JsonResult(refreshTokenResult);
         }
 
         // GET: /api/user/current

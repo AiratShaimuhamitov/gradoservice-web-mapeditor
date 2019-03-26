@@ -54,6 +54,22 @@ namespace GradoService.Infrastructure.Services
 
             var response = await _httpClient.PostAsync(query, httpContent);
 
+            return HandleAuthenticateResponse(response);
+        }
+
+        public async Task<AuthorizeResultModel> RefreshTokenAsync(string refreshToken)
+        {
+            var query = _externalAuthApiConfig.Value.AuthApiUrl
+                        + _externalAuthApiConfig.Value.RefreshTokenPath
+                        + "?refreshToken=" + refreshToken;
+
+            var response = await _httpClient.GetAsync(query);
+
+            return HandleAuthenticateResponse(response);
+        }
+
+        private AuthorizeResultModel HandleAuthenticateResponse(HttpResponseMessage response)
+        {
             if (response.StatusCode == HttpStatusCode.Unauthorized)
             {
                 throw new InvalidAuthenticationException();
@@ -67,11 +83,6 @@ namespace GradoService.Infrastructure.Services
                 RefreshToken = responseJObject["refreshToken"].Value<string>(),
                 LiveTime = responseJObject["ttl"].Value<int>()
             };
-        }
-
-        public Task<AuthorizeResultModel> RefreshTokenAsync(string refreshToken)
-        {
-            throw new NotImplementedException();
         }
     }
 }

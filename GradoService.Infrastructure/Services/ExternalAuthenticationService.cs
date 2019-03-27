@@ -4,9 +4,9 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using GradoService.Application.ConfigurationModels;
+using GradoService.Application.Exceptions;
 using GradoService.Application.Interfaces;
 using GradoService.Application.Model;
-using GradoService.Infrastructure.Exceptions;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Linq;
 
@@ -92,7 +92,7 @@ namespace GradoService.Infrastructure.Services
         {
             if (response.StatusCode != HttpStatusCode.OK)
             {
-                throw new HttpAuthenticationException(response.Content.ReadAsStringAsync().Result, response.StatusCode);
+                throw new ApiException(response.Content.ReadAsStringAsync().Result, (int) response.StatusCode);
             }
         }
     }

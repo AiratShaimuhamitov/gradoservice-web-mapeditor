@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Serilog;
 
 namespace GradoService.WebUI
 {
@@ -36,7 +38,7 @@ namespace GradoService.WebUI
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
             if (env.IsDevelopment())
             {
@@ -47,8 +49,28 @@ namespace GradoService.WebUI
                 app.UseHsts();
             }
 
+            ConfigureLogging(app, env, loggerFactory);
             app.UseHttpsRedirection();
             app.UseMvc();
+        }
+
+        public void ConfigureLogging(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        {
+            Log.Logger = new LoggerConfiguration()
+                .WriteTo.RollingFile("logs\\log-{Date}.log")
+                .CreateLogger();
+
+            if (env.IsDevelopment())
+            {
+                loggerFactory
+                    .AddDebug()
+                    .AddConsole()
+                    .AddSerilog();
+            }
+            else
+            {
+                loggerFactory.AddSerilog();
+            }
         }
     }
 }

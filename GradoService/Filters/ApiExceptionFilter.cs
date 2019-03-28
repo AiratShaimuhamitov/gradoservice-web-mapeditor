@@ -4,6 +4,7 @@ using GradoService.Application.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace GradoService.WebUI.Filters
 {
@@ -50,7 +51,10 @@ namespace GradoService.WebUI.Filters
                 _logger.LogError(new EventId(0), context.Exception, msg);
             }
 
-            context.Result = new JsonResult(apiError);
+            context.Result = new JsonResult(apiError)
+            {
+                SerializerSettings = {NullValueHandling = NullValueHandling.Ignore}
+            };
 
             base.OnException(context);
         }

@@ -1,0 +1,12 @@
+{
+  "ConnectionStrings": {
+    "GradoServiceDatabase": "Host=[HostName];Port=[Port];Database=[DatabaseName];Username=[UserName];Password=[Password]"
+  },
+  "AllowedHosts": "*",
+  "ExternalAuthenticationConfig": {
+    "AuthApiUrl": "http://network.geocrm.ru",
+    "AuthenticationStatusPath": "/auth",
+    "RefreshTokenPath": "/auth/token/refresh",
+    "AuthenticationPath": "/auth/token"
+  }
+}

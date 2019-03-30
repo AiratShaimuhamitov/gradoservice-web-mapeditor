@@ -332,3 +332,7 @@ ASALocalRun/
 
 # Local History for Visual Studio
 .localhistory/
+
+# Appsettings files
+GradoService/appsettings.json
+GradoService/appsettings.Development.json

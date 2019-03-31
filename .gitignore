@@ -334,5 +334,5 @@ ASALocalRun/
 .localhistory/
 
 # Appsettings files
-GradoService/appsettings.json
-GradoService/appsettings.Development.json
+GradoService.WebUI/appsettings.json
+GradoService.WebUI/appsettings.Development.json

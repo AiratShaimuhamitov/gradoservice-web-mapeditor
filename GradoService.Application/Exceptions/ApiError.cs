@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace GradoService.Application.Exceptions
 {
@@ -21,15 +20,6 @@ namespace GradoService.Application.Exceptions
         {
             Message = message;
             IsError = true;
-        }
-
-        public ApiError(ModelStateDictionary modelState)
-        {
-            this.IsError = true;
-            if (modelState != null && modelState.Any(m => m.Value.Errors.Count > 0))
-            {
-                Message = "Please correct the specified errors and try again.";
-            }
         }
     }
 }

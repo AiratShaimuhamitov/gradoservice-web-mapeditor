@@ -25,6 +25,7 @@
   <ItemGroup>
     <ProjectReference Include="..\GradoService.Application\GradoService.Application.csproj" />
     <ProjectReference Include="..\GradoService.Infrastructure\GradoService.Infrastructure.csproj" />
+    <ProjectReference Include="..\GradoService.Persistence\GradoService.Persistence.csproj" />
   </ItemGroup>
 
 </Project>

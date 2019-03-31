@@ -2,6 +2,7 @@
 using GradoService.Application.ConfigurationModels;
 using GradoService.Application.Interfaces;
 using GradoService.Infrastructure.Services;
+using GradoService.Persistence;
 using GradoService.WebUI.Filters;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -9,6 +10,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using Serilog;
 
 namespace GradoService.WebUI
@@ -29,9 +32,24 @@ namespace GradoService.WebUI
                 {
                     options.Filters.Add(typeof(ApiExceptionFilter));
                 })
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
+                .AddJsonOptions(options => {
+                    options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+                    options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                }); ;
 
             services.Configure<ExternalAuthenticationConfig>(Configuration.GetSection("ExternalAuthenticationConfig"));
+
+
+            services.AddSingleton<MetadataDbContextFactory>();
+
+            // Add DbContext using MetadataDbContextFactory
+            services.AddTransient(provider =>
+            {
+                var dbContextFactory = provider.GetService<MetadataDbContextFactory>();
+                return dbContextFactory.CreateDbContext(new[] {""});
+            });
+
 
             services.AddSingleton<HttpClient>();
             services.AddTransient<IAuthenticationService, ExternalAuthenticationService>();

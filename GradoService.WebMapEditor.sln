@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28010.2036
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GradoService.WebUI", "GradoService\GradoService.WebUI.csproj", "{5A3438A5-BD3E-4393-B475-F187DC6C6D5B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GradoService.WebUI", "GradoService.WebUI\GradoService.WebUI.csproj", "{5A3438A5-BD3E-4393-B475-F187DC6C6D5B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Src", "Src", "{CF716E72-4894-46A6-A2DE-6978E91B0075}"
 EndProject

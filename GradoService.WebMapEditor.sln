@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28010.2036
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GradoService.WebUI", "GradoService\GradoService.WebUI.csproj", "{5A3438A5-BD3E-4393-B475-F187DC6C6D5B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GradoService.WebUI", "GradoService.WebUI\GradoService.WebUI.csproj", "{5A3438A5-BD3E-4393-B475-F187DC6C6D5B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Src", "Src", "{CF716E72-4894-46A6-A2DE-6978E91B0075}"
 EndProject
@@ -11,7 +11,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Presentation", "Presentatio
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{ADFE145D-1A60-4C03-92F6-AD74ECFD7CB5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GradoService.Persistence", "GradoService.Persistence\GradoService.Persistence.csproj", "{5355FC1A-FB1B-4505-A95B-DC9E4DFD9DAB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GradoService.Persistence", "GradoService.Persistence\GradoService.Persistence.csproj", "{5355FC1A-FB1B-4505-A95B-DC9E4DFD9DAB}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{C9B912C8-9509-49EE-A654-99C34558F863}"
 EndProject
@@ -19,7 +19,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GradoService.Application", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GradoService.Domain", "GradoService.Domain\GradoService.Domain.csproj", "{852EFABF-A55B-44E7-8EFC-37D8510CD5A3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GradoService.Infrastructure", "GradoService.Infrastructure\GradoService.Infrastructure.csproj", "{C70A9866-09FF-4B6F-A964-40D87BDBB006}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GradoService.Infrastructure", "GradoService.Infrastructure\GradoService.Infrastructure.csproj", "{C70A9866-09FF-4B6F-A964-40D87BDBB006}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

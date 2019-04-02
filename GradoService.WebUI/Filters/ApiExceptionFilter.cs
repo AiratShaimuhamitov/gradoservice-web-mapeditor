@@ -51,10 +51,11 @@ namespace GradoService.WebUI.Filters
                 _logger.LogError(new EventId(0), context.Exception, msg);
             }
 
-            context.Result = new JsonResult(apiError)
-            {
-                SerializerSettings = {NullValueHandling = NullValueHandling.Ignore}
-            };
+            context.Result = new JsonResult(apiError,
+                new JsonSerializerSettings()
+                {
+                    NullValueHandling = NullValueHandling.Ignore
+                });
 
             base.OnException(context);
         }

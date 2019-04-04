@@ -15,7 +15,7 @@ namespace GradoService.Domain.Entities
 
         public string Name { get; set; }
 
-        public string PresentationName { get; set; }
+        public string Type { get; set; }
 
         public ICollection<TableFieldInfo> FieldInfos { get; private set; }
     }

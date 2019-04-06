@@ -69,7 +69,7 @@ namespace GradoService.WebUI
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggingBuilder loggerFactory)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -80,28 +80,8 @@ namespace GradoService.WebUI
                 app.UseHsts();
             }
 
-            ConfigureLogging(env, loggerFactory);
             app.UseHttpsRedirection();
             app.UseMvc();
-        }
-
-        public void ConfigureLogging(IHostingEnvironment env, ILoggingBuilder loggerFactory)
-        {
-            Log.Logger = new LoggerConfiguration()
-                .WriteTo.RollingFile("logs\\log-{Date}.log")
-                .CreateLogger();
-
-            if (env.IsDevelopment())
-            {
-                loggerFactory
-                    .AddDebug()
-                    .AddConsole()
-                    .AddSerilog();
-            }
-            else
-            {
-                loggerFactory.AddSerilog();
-            }
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Logging;
 using Serilog;
 using Serilog.Events;
 
@@ -36,6 +37,34 @@ namespace GradoService.WebUI
                 .UseKestrel()
                 .UseContentRoot(Directory.GetCurrentDirectory())
                 .UseStartup<Startup>()
+                .ConfigureSerilogLogger()
                 .UseSerilog();
+    }
+
+    public static class WebHostBuilderExtenstions
+    {
+        public static IWebHostBuilder ConfigureSerilogLogger(this IWebHostBuilder builder)
+        {
+            builder.ConfigureLogging((hostingContext, logger) =>
+            {
+                Log.Logger = new LoggerConfiguration()
+                    .WriteTo.RollingFile("logs\\log-{Date}.log")
+                    .CreateLogger();
+
+                if (hostingContext.HostingEnvironment.IsDevelopment())
+                {
+                    logger
+                        .AddDebug()
+                        .AddConsole()
+                        .AddSerilog();
+                }
+                else
+                {
+                    logger.AddSerilog();
+                }
+            });
+
+            return builder;
+        }
     }
 }

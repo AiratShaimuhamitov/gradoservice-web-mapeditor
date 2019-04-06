@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using GradoService.Application.Metadata.Queries.GetAllMetadata;
+using GradoService.Application.Metadata.Queries.GetMetadata;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GradoService.WebUI.Controllers
@@ -16,9 +17,9 @@ namespace GradoService.WebUI.Controllers
         }
 
         [HttpGet("{id}")]
-        public JsonResult Get(int id)
+        public async Task<JsonResult> Get(int id)
         {
-            throw new NotImplementedException();
+            return new JsonResult(await Mediator.Send(new GetMetadataQuery { Id = id }));
         }
     }
 }

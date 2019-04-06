@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace GradoService.Application.Metadata.Queries.GetAllMetadata
+namespace GradoService.Application.Metadata.Model
 {
     public class MetadataDto : IHaveCustomMapping
     {

@@ -1,4 +1,5 @@
-﻿using System.Net.Http;
+﻿using AutoMapper;
+using System.Net.Http;
 using GradoService.Application.ConfigurationModels;
 using GradoService.Application.Interfaces;
 using GradoService.Infrastructure.Services;
@@ -13,6 +14,11 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Serilog;
+using System.Reflection;
+using GradoService.Application.Infrastructure;
+using GradoService.Application.Infrastructure.AutoMapper;
+using MediatR;
+using GradoService.Application.Metadata.Queries.GetAllMetadata;
 
 namespace GradoService.WebUI
 {
@@ -28,6 +34,13 @@ namespace GradoService.WebUI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            // Add AutoMapper
+            services.AddAutoMapper(new Assembly[] { typeof(AutoMapperProfile).GetTypeInfo().Assembly });
+
+            // Add MediatR
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(RequestPerformanceBehaviour<,>));
+            services.AddMediatR(typeof(GetAllMetadataQueryHandler).GetTypeInfo().Assembly);
+
             services.AddMvc(options =>
                 {
                     options.Filters.Add(typeof(ApiExceptionFilter));
@@ -36,7 +49,7 @@ namespace GradoService.WebUI
                 .AddJsonOptions(options => {
                     options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
                     options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-                }); ;
+                });
 
             services.Configure<ExternalAuthenticationConfig>(Configuration.GetSection("ExternalAuthenticationConfig"));
 
@@ -56,7 +69,7 @@ namespace GradoService.WebUI
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -67,28 +80,8 @@ namespace GradoService.WebUI
                 app.UseHsts();
             }
 
-            ConfigureLogging(app, env, loggerFactory);
             app.UseHttpsRedirection();
             app.UseMvc();
-        }
-
-        public void ConfigureLogging(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
-        {
-            Log.Logger = new LoggerConfiguration()
-                .WriteTo.RollingFile("logs\\log-{Date}.log")
-                .CreateLogger();
-
-            if (env.IsDevelopment())
-            {
-                loggerFactory
-                    .AddDebug()
-                    .AddConsole()
-                    .AddSerilog();
-            }
-            else
-            {
-                loggerFactory.AddSerilog();
-            }
         }
     }
 }

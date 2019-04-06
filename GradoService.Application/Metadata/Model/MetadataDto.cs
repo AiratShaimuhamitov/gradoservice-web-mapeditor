@@ -1,20 +1,18 @@
-﻿using System;
+﻿using AutoMapper;
+using GradoService.Application.Interfaces.Mapping;
+using GradoService.Domain.Entities;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace GradoService.Domain.Entities
+namespace GradoService.Application.Metadata.Model
 {
-    public class TableInfo
+    public class MetadataDto : IHaveCustomMapping
     {
-        public TableInfo()
-        {
-            FieldInfos = new HashSet<TableFieldInfo>();
-        }
-
         public int Id { get; set; }
 
         public string SchemeName { get; set; }
-
+        
         public string Name { get; set; }
 
         public string PresentationName { get; set; }
@@ -23,7 +21,7 @@ namespace GradoService.Domain.Entities
 
         public string StyleField { get; set; }
 
-        public int GeomType { get; set; }
+        public int Geomtype { get; set; }
 
         public int Type { get; set; }
 
@@ -33,6 +31,9 @@ namespace GradoService.Domain.Entities
 
         public string ViewQuery { get; set; }
 
-        public ICollection<TableFieldInfo> FieldInfos { get; private set; }
+        public void CreateMappings(Profile configuration)
+        {
+            configuration.CreateMap<TableInfo, MetadataDto>();
+        }
     }
 }

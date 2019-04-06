@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using GradoService.Domain.Entities;
+﻿using GradoService.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -19,7 +16,7 @@ namespace GradoService.Persistence.Configuration
 
             builder.Property(p => p.Name).HasColumnName("name");
 
-            builder.Property(p => p.PresentationName).HasColumnName("name_db");
+            builder.Property(p => p.Type).HasColumnName("name_db");
         }
     }
 }

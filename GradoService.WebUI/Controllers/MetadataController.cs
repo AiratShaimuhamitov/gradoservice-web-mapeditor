@@ -1,29 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Reflection;
-using System.Reflection.Emit;
 using System.Threading.Tasks;
-using GradoService.Application.Exceptions;
-using GradoService.Domain.Entities;
-using GradoService.Persistence;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using GradoService.Application.Metadata.Queries.GetAllMetadata;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 
 namespace GradoService.WebUI.Controllers
 {
     [Route("api/meta")]
     [ApiController]
-    public class MetadataController : ControllerBase
+    public class MetadataController : BaseController
     {
         [HttpGet]
-        public JsonResult GetAll()
+        public async Task<JsonResult> GetAll()
         {
-            throw new NotImplementedException();
+            return new JsonResult(await Mediator.Send(new GetAllMetadataQuery()));
         }
 
         [HttpGet("{id}")]

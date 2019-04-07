@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28010.2036
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28729.10
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GradoService.WebUI", "GradoService.WebUI\GradoService.WebUI.csproj", "{5A3438A5-BD3E-4393-B475-F187DC6C6D5B}"
 EndProject
@@ -20,6 +20,10 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GradoService.Domain", "GradoService.Domain\GradoService.Domain.csproj", "{852EFABF-A55B-44E7-8EFC-37D8510CD5A3}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GradoService.Infrastructure", "GradoService.Infrastructure\GradoService.Infrastructure.csproj", "{C70A9866-09FF-4B6F-A964-40D87BDBB006}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{EC74BA8C-95BA-4510-8797-754A42A7C25E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GradoService.Persistence.Tests", "GradoService.Persistence.Tests\GradoService.Persistence.Tests.csproj", "{4B6F58FE-1832-4D4F-8AD6-FDCA8C709DD7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -47,6 +51,10 @@ Global
 		{C70A9866-09FF-4B6F-A964-40D87BDBB006}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C70A9866-09FF-4B6F-A964-40D87BDBB006}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C70A9866-09FF-4B6F-A964-40D87BDBB006}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4B6F58FE-1832-4D4F-8AD6-FDCA8C709DD7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4B6F58FE-1832-4D4F-8AD6-FDCA8C709DD7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4B6F58FE-1832-4D4F-8AD6-FDCA8C709DD7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4B6F58FE-1832-4D4F-8AD6-FDCA8C709DD7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -60,6 +68,7 @@ Global
 		{6579E264-9133-45F8-9154-20F451F9A4FD} = {C9B912C8-9509-49EE-A654-99C34558F863}
 		{852EFABF-A55B-44E7-8EFC-37D8510CD5A3} = {C9B912C8-9509-49EE-A654-99C34558F863}
 		{C70A9866-09FF-4B6F-A964-40D87BDBB006} = {ADFE145D-1A60-4C03-92F6-AD74ECFD7CB5}
+		{4B6F58FE-1832-4D4F-8AD6-FDCA8C709DD7} = {EC74BA8C-95BA-4510-8797-754A42A7C25E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {255817ED-1EC2-4FF9-BD98-8E9E0AFA5BC3}

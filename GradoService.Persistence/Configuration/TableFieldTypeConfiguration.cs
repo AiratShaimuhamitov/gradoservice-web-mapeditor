@@ -1,12 +1,12 @@
-﻿using GradoService.Domain.Entities;
+﻿using GradoService.Domain.Entities.Metadata;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GradoService.Persistence.Configuration
 {
-    public class TableFieldTypeConfiguration : IEntityTypeConfiguration<TableFieldType>
+    public class TableFieldTypeConfiguration : IEntityTypeConfiguration<MetaTableFieldType>
     {
-        public void Configure(EntityTypeBuilder<TableFieldType> builder)
+        public void Configure(EntityTypeBuilder<MetaTableFieldType> builder)
         {
             builder.ToTable("table_type", "sys_scheme");
 

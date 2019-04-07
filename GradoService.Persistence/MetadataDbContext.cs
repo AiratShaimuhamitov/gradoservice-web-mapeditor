@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using GradoService.Domain.Entities;
+﻿using GradoService.Domain.Entities.Metadata;
 using Microsoft.EntityFrameworkCore;
 
 namespace GradoService.Persistence
@@ -14,9 +11,9 @@ namespace GradoService.Persistence
             
         }
 
-        public DbSet<TableInfo> TableInfos { get; set; }
-        public DbSet<TableFieldInfo> TableFieldInfos { get; set; }
-        public DbSet<TableFieldType> TableFieldTypes { get; set; }
+        public DbSet<MetaTableInfo> TableInfos { get; set; }
+        public DbSet<MetaTableFieldInfo> TableFieldInfos { get; set; }
+        public DbSet<MetaTableFieldType> TableFieldTypes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

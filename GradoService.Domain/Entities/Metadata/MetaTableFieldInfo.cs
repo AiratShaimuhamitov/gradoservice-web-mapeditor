@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace GradoService.Domain.Entities
+namespace GradoService.Domain.Entities.Metadata
 {
-    public class TableFieldInfo
+    public class MetaTableFieldInfo
     {
         public int Id { get; set; }
 
@@ -16,8 +16,8 @@ namespace GradoService.Domain.Entities
         
         public int FieldTypeId { get; set; }
  
-        public TableInfo Table { get; set; }
+        public MetaTableInfo Table { get; set; }
 
-        public TableFieldType FieldType { get; set; }
+        public MetaTableFieldType FieldType { get; set; }
     }
 }

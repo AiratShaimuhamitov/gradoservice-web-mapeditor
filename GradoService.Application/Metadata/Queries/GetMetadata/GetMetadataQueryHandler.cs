@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using GradoService.Application.Exceptions;
-using GradoService.Domain.Entities;
+using GradoService.Domain.Entities.Metadata;
 using GradoService.Persistence;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -29,7 +29,7 @@ namespace GradoService.Application.Metadata.Queries.GetMetadata
             
             if(metadata == null)
             {
-                throw new NotFoundException(nameof(TableInfo), request.Id);
+                throw new NotFoundException(nameof(MetaTableInfo), request.Id);
             }
 
             return _mapper.Map<MetadataViewModel>(metadata);

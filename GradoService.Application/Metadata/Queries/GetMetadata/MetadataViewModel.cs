@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using GradoService.Application.Interfaces.Mapping;
 using GradoService.Application.Metadata.Model;
-using GradoService.Domain.Entities;
+using GradoService.Domain.Entities.Metadata;
 
 namespace GradoService.Application.Metadata.Queries.GetMetadata
 {
@@ -17,22 +17,15 @@ namespace GradoService.Application.Metadata.Queries.GetMetadata
 
         public void CreateMappings(Profile configuration)
         {
-            configuration.CreateMap<TableInfo, MetadataViewModel>()
-                .ForMember(mDTO => mDTO.Metadata, opt => opt.MapFrom<MetadataDtoResolver>())
+            configuration.CreateMap<MetaTableInfo, MetadataViewModel>()
+                .ForMember(mDTO => mDTO.Metadata, opt => opt.MapFrom(
+                    (source, destination, destMember, context) => { return context.Mapper.Map<MetadataDto>(source); }))
                 .ForMember(mDTO => mDTO.CreateEnabled, opt => opt.MapFrom<MetadataPermissionResolver>());
         }
 
-        class MetadataDtoResolver : IValueResolver<TableInfo, MetadataViewModel, MetadataDto>
+        class MetadataPermissionResolver : IValueResolver<MetaTableInfo, MetadataViewModel, bool>
         {
-            public MetadataDto Resolve(TableInfo source, MetadataViewModel destination, MetadataDto destMember, ResolutionContext context)
-            {
-                return context.Mapper.Map<MetadataDto>(source);
-            }
-        }
-
-        class MetadataPermissionResolver : IValueResolver<TableInfo, MetadataViewModel, bool>
-        {
-            public bool Resolve(TableInfo source, MetadataViewModel destination, bool destMember, ResolutionContext context)
+            public bool Resolve(MetaTableInfo source, MetadataViewModel destination, bool destMember, ResolutionContext context)
             {
                 //TODO: Permission service for tables
                 return false;

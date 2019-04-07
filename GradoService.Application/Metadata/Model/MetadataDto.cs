@@ -1,9 +1,6 @@
 ﻿using AutoMapper;
 using GradoService.Application.Interfaces.Mapping;
-using GradoService.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using GradoService.Domain.Entities.Metadata;
 
 namespace GradoService.Application.Metadata.Model
 {
@@ -33,7 +30,7 @@ namespace GradoService.Application.Metadata.Model
 
         public void CreateMappings(Profile configuration)
         {
-            configuration.CreateMap<TableInfo, MetadataDto>();
+            configuration.CreateMap<MetaTableInfo, MetadataDto>();
         }
     }
 }

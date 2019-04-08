@@ -19,12 +19,12 @@ namespace GradoService.Persistence.CommandBuilder
         {
             if(!_isConditionAppended)
             {
-                _stringBuilder.AppendFormat(" WHERE {0} = {1}", field.Name, value);
+                _stringBuilder.AppendFormat(" WHERE {0} = '{1}'", field.Name, value);
                 _isConditionAppended = true;
                 return;
             }
 
-            _stringBuilder.AppendFormat(" && {0} = {1}", field.Name, value);
+            _stringBuilder.AppendFormat(" && {0} = '{1}'", field.Name, value);
         }
 
         public override void CreateDeleteQuery(Table table)
@@ -49,9 +49,9 @@ namespace GradoService.Persistence.CommandBuilder
 
             for(int i = 0; i < insertingRow.Data.Keys.Count() - 1; i++)
             {
-                _stringBuilder.Append(insertingRow.Data.ElementAt(i).Value.ToString() + ", ");
+                _stringBuilder.AppendFormat("'{0}', ", insertingRow.Data.ElementAt(i).Value.ToString());
             }
-            _stringBuilder.Append(insertingRow.Data.Last().Value.ToString() + ") ");
+            _stringBuilder.AppendFormat("'{0}')", insertingRow.Data.Last().Value.ToString());
         }
 
         public override void CreateSelectQuery(Table table)
@@ -68,10 +68,10 @@ namespace GradoService.Persistence.CommandBuilder
 
             for(int i = 0; i < updatingRow.Data.Keys.Count() - 1; i++)
             {
-                _stringBuilder.AppendFormat("{0} = {1}, ", updatingRow.Data.ElementAt(i).Key.Name, updatingRow.Data.ElementAt(i).Value.ToString());
+                _stringBuilder.AppendFormat("{0} = '{1}', ", updatingRow.Data.ElementAt(i).Key.Name, updatingRow.Data.ElementAt(i).Value.ToString());
             }
 
-            _stringBuilder.AppendFormat("{0} = {1}", updatingRow.Data.Last().Key.Name, updatingRow.Data.Last().Value.ToString());
+            _stringBuilder.AppendFormat("{0} = '{1}'", updatingRow.Data.Last().Key.Name, updatingRow.Data.Last().Value.ToString());
         }
     }
 }

@@ -25,7 +25,19 @@ namespace GradoService.Persistence.Tests.CommandBuilderTest
             _sqlCommandBuilder.CreateSelectQuery(_table);
             var sqlQuery = _sqlCommandBuilder.CompleteQuery();
 
-            Assert.Equal("SELECT * FROM data.Car", sqlQuery);
+            Assert.Equal("SELECT * FROM data.Car".ToLower(), sqlQuery.ToLower());
+        }
+
+        [Fact]
+        public void TestCreateSelectCommandWithCondition()
+        {
+            _sqlCommandBuilder.CreateSelectQuery(_table);
+
+            var idField = _table.Fields.FirstOrDefault(x => x.Name == "Id");
+            _sqlCommandBuilder.AddCondition(idField, "0");
+            var sqlQuery = _sqlCommandBuilder.CompleteQuery();
+
+            Assert.Equal("SELECT * FROM data.Car WHERE Id = '0'".ToLower(), sqlQuery.ToLower());
         }
 
         [Fact]
@@ -34,7 +46,7 @@ namespace GradoService.Persistence.Tests.CommandBuilderTest
             _sqlCommandBuilder.CreateDeleteQuery(_table);
             var sqlQuery = _sqlCommandBuilder.CompleteQuery();
 
-            Assert.Equal("DELETE * FROM data.Car", sqlQuery);
+            Assert.Equal("DELETE * FROM data.Car".ToLower(), sqlQuery.ToLower());
         }
 
         [Fact]
@@ -46,7 +58,39 @@ namespace GradoService.Persistence.Tests.CommandBuilderTest
             _sqlCommandBuilder.AddCondition(idField, "0");
             var sqlQuery = _sqlCommandBuilder.CompleteQuery();
 
-            Assert.Equal("DELETE * FROM data.Car WHERE id = 0".ToLower(), sqlQuery.ToLower());
+            Assert.Equal("DELETE * FROM data.Car WHERE id = '0'".ToLower(), sqlQuery.ToLower());
+        }
+
+        [Fact]
+        public void TestCreateInsertCommand()
+        {
+            _sqlCommandBuilder.CreateInsertQuery(_table, _table.Rows.FirstOrDefault());
+            var sqlQuery = _sqlCommandBuilder.CompleteQuery();
+
+            Assert.Equal("INSERT INTO data.Car(Id, Brand, Cost) VALUES('0', 'Audi', '1000')".ToLower(), 
+                sqlQuery.ToLower());
+        }
+
+        [Fact]
+        public void TestCreateUpdateCommand()
+        {
+            _sqlCommandBuilder.CreateUpdateQuery(_table, _table.Rows.FirstOrDefault());
+            var sqlQuery = _sqlCommandBuilder.CompleteQuery();
+
+            Assert.Equal("UPDATE data.Car SET Id = '0', Brand = 'Audi', Cost = '1000'".ToLower(), sqlQuery.ToLower());
+        }
+
+        [Fact]
+        public void TestCreateUpdateCommandWithCondition()
+        {
+            _sqlCommandBuilder.CreateUpdateQuery(_table, _table.Rows.FirstOrDefault());
+
+            var idField = _table.Fields.FirstOrDefault(x => x.Name == "Id");
+            _sqlCommandBuilder.AddCondition(idField, "0");
+            var sqlQuery = _sqlCommandBuilder.CompleteQuery();
+
+            Assert.Equal("UPDATE data.Car SET Id = '0', Brand = 'Audi', Cost = '1000' WHERE Id = '0'".ToLower(), 
+                sqlQuery.ToLower());
         }
 
         private Table InitializeTable()

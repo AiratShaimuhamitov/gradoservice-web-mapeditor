@@ -1,25 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using GradoService.Application.Table.Queries.GetAllTables;
+using GradoService.Application.Table.Queries.GetTable;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GradoService.WebUI.Controllers
 {
     [Route("api/table")]
     [ApiController]
-    public class TableController
+    public class TableController : BaseController
     {
-        [HttpGet("list")]
-        public JsonResult GetAll()
+        [HttpGet]
+        public async Task<JsonResult> GetAll()
         {
-            throw new NotImplementedException();
+            return new JsonResult(await Mediator.Send(new GetAllTablesQuery()));
         }
 
         [HttpGet("{id}")]
-        public JsonResult Get(string id)
+        public async Task<JsonResult> Get(int id)
         {
-            throw new NotImplementedException();
+            return new JsonResult(await Mediator.Send(new GetTableQuery { Id = id}));
         }
 
         // TODO Add new table, Update table, Delete table

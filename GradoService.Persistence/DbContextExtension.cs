@@ -19,7 +19,7 @@ namespace GradoService.Persistence
         /// <param name="parameters">Query parameters</param>
         /// <returns>IEnumerable of dictionary that represents a database table</returns>
         public static IEnumerable<IDictionary<string, object>> CollectFromExecuteSql(this DbContext dbContext, string sql,
-            Dictionary<string, object> parameters)
+            Dictionary<string, object> parameters = null)
         {
             using (var cmd = dbContext.Database.GetDbConnection().CreateCommand())
             {

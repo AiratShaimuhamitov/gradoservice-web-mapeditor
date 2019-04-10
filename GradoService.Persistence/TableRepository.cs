@@ -1,29 +1,62 @@
-﻿using GradoService.Domain.Entities.Table;
+﻿using AutoMapper;
+using GradoService.Domain.Entities.Table;
+using GradoService.Persistence.CommandBuilder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace GradoService.Persistence
 {
-    public class TableRepository
+    public class TableRepository    
     {
-        private readonly DbContext _dbContext;
-        private readonly ILogger<TableRepository> _logger;
+        private readonly GradoServiceDbContext _dbContext;
+        private readonly SqlCommandBuilder _sqlCommandBuilder;
+        private readonly IMapper _mapper;
 
-        public TableRepository(DbContext dbContext, ILogger<TableRepository> logger)
+        public TableRepository(GradoServiceDbContext dbContext, SqlCommandBuilder sqlCommandBuilder, IMapper mapper)
         {
             _dbContext = dbContext;
-            _logger = logger;
+            _sqlCommandBuilder = sqlCommandBuilder;
+            _mapper = mapper;
         } 
 
-        public IEnumerable<Table> GetAllTables()
+        public async Task<Table> GetTableData(int tableId)
         {
-            throw new NotImplementedException();
+            var tableMeta = await _dbContext.TableInfos.Where(x => x.Id == tableId)
+                .Include(x => x.FieldInfos).FirstAsync();
+
+            if (tableMeta == null) return null;
+
+            var table = _mapper.Map<Table>(tableMeta);
+
+#region Replace with Director (element of builder pattern)
+            _sqlCommandBuilder.CreateSelectQuery(table);
+            var sqlQuery = _sqlCommandBuilder.CompleteQuery();
+#endregion
+
+            var unhandledRows = _dbContext.CollectFromExecuteSql(sqlQuery);
+
+            var rows = new List<Row>();
+            foreach(var unhandledRow in unhandledRows)
+            {
+                var row = new Row(); 
+                foreach (var field in table.Fields)
+                {
+                    row.Data[field.Name] = unhandledRow[field.Name];
+                }
+                rows.Add(row);
+            }
+
+            table.Rows = rows;
+
+            return table;
         }
 
-        public Table GetTableDataByTableId(int id)
+        public Row GetTableRow(int tableId, int rowId)
         {
             throw new NotImplementedException();
         }

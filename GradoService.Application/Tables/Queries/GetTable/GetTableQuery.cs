@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace GradoService.Application.Table.Queries.GetTable
+namespace GradoService.Application.Tables.Queries.GetTable
 {
     public class GetTableQuery : IRequest<TableViewModel>
     {

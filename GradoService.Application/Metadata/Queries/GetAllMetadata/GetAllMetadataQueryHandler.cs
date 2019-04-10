@@ -13,18 +13,18 @@ namespace GradoService.Application.Metadata.Queries.GetAllMetadata
 {
     public class GetAllMetadataQueryHandler : IRequestHandler<GetAllMetadataQuery, MetadataListViewModel>
     {
-        private readonly MetadataDbContext _metadataDbContext;
+        private readonly GradoServiceDbContext _GradoServiceDbContext;
         private readonly IMapper _mapper;
 
-        public GetAllMetadataQueryHandler(MetadataDbContext metadataDbContext, IMapper mapper)
+        public GetAllMetadataQueryHandler(GradoServiceDbContext GradoServiceDbContext, IMapper mapper)
         {
-            _metadataDbContext = metadataDbContext;
+            _GradoServiceDbContext = GradoServiceDbContext;
             _mapper = mapper;
         }
 
         public async Task<MetadataListViewModel> Handle(GetAllMetadataQuery request, CancellationToken cancellationToken)
         {
-            var tables = await _metadataDbContext.TableInfos.OrderBy(p => p.Id)
+            var tables = await _GradoServiceDbContext.TableInfos.OrderBy(p => p.Id)
                 .Include(p => p.FieldInfos)
                 .ToListAsync(cancellationToken);
 

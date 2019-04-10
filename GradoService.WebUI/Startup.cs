@@ -19,6 +19,8 @@ using GradoService.Application.Infrastructure;
 using GradoService.Application.Infrastructure.AutoMapper;
 using MediatR;
 using GradoService.Application.Metadata.Queries.GetAllMetadata;
+using GradoService.Persistence.Mapping.Profiles;
+using GradoService.Persistence.CommandBuilder;
 
 namespace GradoService.WebUI
 {
@@ -35,7 +37,11 @@ namespace GradoService.WebUI
         public void ConfigureServices(IServiceCollection services)
         {
             // Add AutoMapper
-            services.AddAutoMapper(new Assembly[] { typeof(AutoMapperProfile).GetTypeInfo().Assembly });
+            services.AddAutoMapper(new Assembly[]
+            {
+                typeof(AutoMapperProfile).GetTypeInfo().Assembly//,
+                //typeof(DbMapperProfile).GetTypeInfo().Assembly
+            });
 
             // Add MediatR
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(RequestPerformanceBehaviour<,>));
@@ -54,15 +60,18 @@ namespace GradoService.WebUI
             services.Configure<ExternalAuthenticationConfig>(Configuration.GetSection("ExternalAuthenticationConfig"));
 
 
-            services.AddSingleton<MetadataDbContextFactory>();
+            services.AddSingleton<GradoServiceDbContextFactory>();
 
-            // Add DbContext using MetadataDbContextFactory
+            // Add DbContext using GradoServiceDbContextFactory
             services.AddTransient(provider =>
             {
-                var dbContextFactory = provider.GetService<MetadataDbContextFactory>();
+                var dbContextFactory = provider.GetService<GradoServiceDbContextFactory>();
                 return dbContextFactory.CreateDbContext(new[] {""});
             });
 
+            //services.AddScoped<TableRepository>();
+            //services.AddSingleton<SqlCommandBuilder, PostgresSqlCommandBuilder>();
+            
 
             services.AddSingleton<HttpClient>();
             services.AddTransient<IAuthenticationService, ExternalAuthenticationService>();

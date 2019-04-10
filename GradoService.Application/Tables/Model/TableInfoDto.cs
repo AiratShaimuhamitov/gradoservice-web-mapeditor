@@ -3,9 +3,9 @@ using GradoService.Application.Interfaces.Mapping;
 using GradoService.Domain.Entities.Metadata;
 using System.Collections.Generic;
 
-namespace GradoService.Application.Table.Model
+namespace GradoService.Application.Tables.Model
 {
-    public class TableDto : IHaveCustomMapping
+    public class TableInfoDto : IHaveCustomMapping
     {
         public int Id { get; set; }
 
@@ -21,24 +21,24 @@ namespace GradoService.Application.Table.Model
 
         public bool ContainsDocument { get; set; }
 
-        public IEnumerable<FieldDto> Fields { get; set; }
+        public IEnumerable<FieldInfoDto> Fields { get; set; }
 
         public void CreateMappings(Profile configuration)
         {
-            configuration.CreateMap<MetaTableInfo, TableDto>()
+            configuration.CreateMap<MetaTableInfo, TableInfoDto>()
                 .ForMember(tDTO => tDTO.Name, x => x.MapFrom(m => m.PresentationName))
                 .ForMember(tDTO => tDTO.Fields, x => x.MapFrom<FieldsResolver>());
         }
 
-        class FieldsResolver : IValueResolver<MetaTableInfo, TableDto, IEnumerable<FieldDto>>
+        class FieldsResolver : IValueResolver<MetaTableInfo, TableInfoDto, IEnumerable<FieldInfoDto>>
         {
-            public IEnumerable<FieldDto> Resolve(MetaTableInfo source, TableDto destination, IEnumerable<FieldDto> destMember, ResolutionContext context)
+            public IEnumerable<FieldInfoDto> Resolve(MetaTableInfo source, TableInfoDto destination, IEnumerable<FieldInfoDto> destMember, ResolutionContext context)
             {
-                var list = new List<FieldDto>();
+                var list = new List<FieldInfoDto>();
 
                 foreach(var fieldInfo in source.FieldInfos)
                 {
-                    list.Add(context.Mapper.Map<FieldDto>(fieldInfo));
+                    list.Add(context.Mapper.Map<FieldInfoDto>(fieldInfo));
                 }
 
                 return list;

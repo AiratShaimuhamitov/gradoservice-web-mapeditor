@@ -1,13 +1,13 @@
-﻿using GradoService.Application.Table.Model;
+﻿using GradoService.Application.Tables.Model;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace GradoService.Application.Table.Queries.GetTable
+namespace GradoService.Application.Tables.Queries.GetTable
 {
     public class TableViewModel
     {
-        public TableDto Table { get; set; }
+        public TableInfoDto Table { get; set; }
 
         public bool CreateEnabled { get; set; }
     }

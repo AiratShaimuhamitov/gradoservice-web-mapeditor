@@ -3,9 +3,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GradoService.Persistence
 {
-    public class MetadataDbContext : DbContext
+    public class GradoServiceDbContext : DbContext
     {
-        public MetadataDbContext(DbContextOptions<MetadataDbContext> options)
+        public GradoServiceDbContext(DbContextOptions<GradoServiceDbContext> options)
             : base(options)
         {
             
@@ -17,7 +17,7 @@ namespace GradoService.Persistence
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.ApplyConfigurationsFromAssembly(typeof(MetadataDbContext).Assembly);
+            modelBuilder.ApplyConfigurationsFromAssembly(typeof(GradoServiceDbContext).Assembly);
         }
     }
 }

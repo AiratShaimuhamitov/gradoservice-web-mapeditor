@@ -2,9 +2,9 @@
 using GradoService.Application.Interfaces.Mapping;
 using GradoService.Domain.Entities.Metadata;
 
-namespace GradoService.Application.Table.Model
+namespace GradoService.Application.Tables.Model
 {
-    public class FieldDto : IHaveCustomMapping
+    public class FieldInfoDto : IHaveCustomMapping
     {
         public string Name { get; set; }
 
@@ -13,7 +13,7 @@ namespace GradoService.Application.Table.Model
         public void CreateMappings(Profile configuration)
         {
             configuration.CreateMap<
-                MetaTableFieldInfo, FieldDto>()
+                MetaTableFieldInfo, FieldInfoDto>()
                 .ForMember(tfDTO => tfDTO.Name, x => x.MapFrom(m => m.PresentationName))
                 .ForMember(tfDTO => tfDTO.FieldType, x => x.MapFrom(m => m.FieldType.Name));
         }

@@ -27,12 +27,15 @@ namespace GradoService.Persistence
                 if (cmd.Connection.State != ConnectionState.Open)
                     cmd.Connection.Open();
 
-                foreach (KeyValuePair<string, object> param in parameters)
+                if (parameters != null)
                 {
-                    DbParameter dbParameter = cmd.CreateParameter();
-                    dbParameter.ParameterName = param.Key;
-                    dbParameter.Value = param.Value;
-                    cmd.Parameters.Add(dbParameter);
+                    foreach (KeyValuePair<string, object> param in parameters)
+                    {
+                        DbParameter dbParameter = cmd.CreateParameter();
+                        dbParameter.ParameterName = param.Key;
+                        dbParameter.Value = param.Value;
+                        cmd.Parameters.Add(dbParameter);
+                    }
                 }
 
                 var queryResult = new List<Dictionary<string, object>>();
@@ -49,7 +52,7 @@ namespace GradoService.Persistence
                             }
                             catch (NotSupportedException)
                             {
-                                //TODO: ignored for a while, redevelop this
+                                dataRow.Add(dataReader.GetName(fieldCount), null); //TODO: ignored for a while, redevelop this
                             }
                         }
 

@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
-using GradoService.Application.Table.Queries.GetAllTables;
-using GradoService.Application.Table.Queries.GetTable;
+using GradoService.Application.Tables.Queries.GetAllTables;
+using GradoService.Application.Tables.Queries.GetTable;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GradoService.WebUI.Controllers

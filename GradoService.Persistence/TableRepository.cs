@@ -33,12 +33,12 @@ namespace GradoService.Persistence
 
             var table = _mapper.Map<Table>(tableMeta);
 
-#region Replace with Director (element of builder pattern)
-            _sqlCommandBuilder.CreateSelectQuery(table);
-            var sqlQuery = _sqlCommandBuilder.CompleteQuery();
-#endregion
+//#region Replace with Director (element of builder pattern)
+//            _sqlCommandBuilder.CreateSelectQuery(table);
+//            var sqlQuery = _sqlCommandBuilder.CompleteQuery();
+//#endregion
 
-            var unhandledRows = _dbContext.CollectFromExecuteSql(sqlQuery);
+            var unhandledRows = _dbContext.CollectFromExecuteSql(tableMeta.ViewQuery);
 
             var rows = new List<Row>();
             foreach(var unhandledRow in unhandledRows)
@@ -46,7 +46,11 @@ namespace GradoService.Persistence
                 var row = new Row(); 
                 foreach (var field in table.Fields)
                 {
-                    row.Data[field.Name] = unhandledRow[field.Name];
+                    unhandledRow.TryGetValue(field.Name, out object obj);
+                    if (obj != null)
+                    {
+                        row.Data[field.Name] = obj;
+                    }
                 }
                 rows.Add(row);
             }

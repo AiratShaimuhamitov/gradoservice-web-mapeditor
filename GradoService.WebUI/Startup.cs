@@ -39,8 +39,8 @@ namespace GradoService.WebUI
             // Add AutoMapper
             services.AddAutoMapper(new Assembly[]
             {
-                typeof(AutoMapperProfile).GetTypeInfo().Assembly//,
-                //typeof(DbMapperProfile).GetTypeInfo().Assembly
+                typeof(AutoMapperProfile).GetTypeInfo().Assembly,
+                typeof(DbMapperProfile).GetTypeInfo().Assembly
             });
 
             // Add MediatR
@@ -69,8 +69,9 @@ namespace GradoService.WebUI
                 return dbContextFactory.CreateDbContext(new[] {""});
             });
 
-            //services.AddScoped<TableRepository>();
-            //services.AddSingleton<SqlCommandBuilder, PostgresSqlCommandBuilder>();
+            // Add Table Repository
+            services.AddScoped<TableRepository>();
+            services.AddSingleton<SqlCommandBuilder, PostgresSqlCommandBuilder>();
             
 
             services.AddSingleton<HttpClient>();

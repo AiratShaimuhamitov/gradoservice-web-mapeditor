@@ -68,10 +68,10 @@ namespace GradoService.Persistence.CommandBuilder
 
             for(int i = 0; i < updatingRow.Data.Keys.Count() - 1; i++)
             {
-                _stringBuilder.AppendFormat("{0} = '{1}', ", updatingRow.Data.ElementAt(i).Key.Name, updatingRow.Data.ElementAt(i).Value.ToString());
+                _stringBuilder.AppendFormat("{0} = '{1}', ", updatingRow.Data.ElementAt(i).Key, updatingRow.Data.ElementAt(i).Value.ToString());
             }
 
-            _stringBuilder.AppendFormat("{0} = '{1}'", updatingRow.Data.Last().Key.Name, updatingRow.Data.Last().Value.ToString());
+            _stringBuilder.AppendFormat("{0} = '{1}'", updatingRow.Data.Last().Key, updatingRow.Data.Last().Value.ToString());
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿using GradoService.Application.Exceptions;
+﻿using AutoMapper;
+using GradoService.Application.Exceptions;
+using GradoService.Application.Tables.Model;
 using GradoService.Persistence;
 using MediatR;
 using System;
@@ -11,11 +13,13 @@ namespace GradoService.Application.Tables.Queries.GetTableData
 {
     public class GetTableDataQueryHandler : IRequestHandler<GetTableDataQuery, TableDataViewModel>
     {
-        public TableRepository _tableRepository;
+        private readonly TableRepository _tableRepository;
+        private readonly IMapper _mapper;
 
-        public GetTableDataQueryHandler(TableRepository tableRepository)
+        public GetTableDataQueryHandler(TableRepository tableRepository, IMapper mapper)
         {
             _tableRepository = tableRepository;
+            _mapper = mapper;
         }
 
         public async Task<TableDataViewModel> Handle(GetTableDataQuery request, CancellationToken cancellationToken)
@@ -29,7 +33,7 @@ namespace GradoService.Application.Tables.Queries.GetTableData
 
             return new TableDataViewModel()
             {
-                Table = table,
+                Table = _mapper.Map<TableDto>(table),
                 CreateEnabled = true
             };
         }

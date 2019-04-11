@@ -27,7 +27,9 @@ namespace GradoService.Persistence
         public async Task<Table> GetTableData(int tableId)
         {
             var tableMeta = await _dbContext.TableInfos.Where(x => x.Id == tableId)
-                .Include(x => x.FieldInfos).FirstAsync();
+                .Include(x => x.FieldInfos)
+                    .ThenInclude(x => x.FieldType)
+                .FirstAsync();
 
             if (tableMeta == null) return null;
 
@@ -43,13 +45,14 @@ namespace GradoService.Persistence
             var rows = new List<Row>();
             foreach(var unhandledRow in unhandledRows)
             {
-                var row = new Row(); 
+                var row = new Row { TableId = table.Id };
+                    
                 foreach (var field in table.Fields)
                 {
                     unhandledRow.TryGetValue(field.Name, out object obj);
                     if (obj != null)
                     {
-                        row.Data[field.Name] = obj;
+                        row.Data[field] = obj;
                     }
                 }
                 rows.Add(row);

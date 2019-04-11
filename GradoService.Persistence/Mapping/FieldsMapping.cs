@@ -13,7 +13,7 @@ namespace GradoService.Persistence.Mapping
         public void CreateMappings(Profile profile)
         {
             profile.CreateMap<MetaTableFieldInfo, Field>()
-                .ForMember(x => x.Type, m => m.MapFrom(x => x.FieldType.Name));
+                .ForMember(x => x.Type, m => m.MapFrom(x => x.FieldType.Type));
         }
     }
 }

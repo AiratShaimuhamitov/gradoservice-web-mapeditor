@@ -24,7 +24,7 @@ namespace GradoService.Persistence.CommandBuilder
                 return;
             }
 
-            _stringBuilder.AppendFormat(" && {0} = '{1}'", field.Name, value);
+            _stringBuilder.AppendFormat(" and {0} = '{1}'", field.Name, value);
         }
 
         public override void CreateDeleteQuery(Table table)
@@ -68,10 +68,16 @@ namespace GradoService.Persistence.CommandBuilder
 
             for(int i = 0; i < updatingRow.Data.Keys.Count() - 1; i++)
             {
-                _stringBuilder.AppendFormat("{0} = '{1}', ", updatingRow.Data.ElementAt(i).Key, updatingRow.Data.ElementAt(i).Value.ToString());
+                _stringBuilder.AppendFormat("{0} = '{1}', ", updatingRow.Data.ElementAt(i).Key.Name, updatingRow.Data.ElementAt(i).Value.ToString());
             }
 
-            _stringBuilder.AppendFormat("{0} = '{1}'", updatingRow.Data.Last().Key, updatingRow.Data.Last().Value.ToString());
+            _stringBuilder.AppendFormat("{0} = '{1}'", updatingRow.Data.Last().Key.Name, updatingRow.Data.Last().Value.ToString());
+        }
+
+        public override void CreateCustomQuery(string query)
+        {
+            _stringBuilder.Clear();
+            _stringBuilder.Append(query);
         }
     }
 }

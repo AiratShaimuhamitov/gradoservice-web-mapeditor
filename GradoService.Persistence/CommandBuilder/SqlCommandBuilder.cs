@@ -24,6 +24,8 @@ namespace GradoService.Persistence.CommandBuilder
 
         public abstract void AddCondition(Field field, string value);
 
+        public abstract void CreateCustomQuery(string query);
+
         public virtual string CompleteQuery()
         {
             var result = _stringBuilder.ToString();

@@ -8,11 +8,11 @@ namespace GradoService.Domain.Entities.Table
     {
         public int TableId { get; set; }
 
-        public Dictionary<string, object> Data { get; set; }
+        public Dictionary<Field, object> Data { get; set; }
 
         public Row()
         {
-            Data = new Dictionary<string, object>();
+            Data = new Dictionary<Field, object>();
         }
     }
 }

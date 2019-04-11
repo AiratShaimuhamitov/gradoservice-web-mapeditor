@@ -41,12 +41,27 @@ namespace GradoService.Persistence.Tests.CommandBuilderTest
         }
 
         [Fact]
+        public void TestCreateSelectCommandWithDoubleCondition()
+        {
+            _sqlCommandBuilder.CreateSelectQuery(_table);
+
+            var idField = _table.Fields.FirstOrDefault(x => x.Name == "Id");
+            _sqlCommandBuilder.AddCondition(idField, "0");
+
+            var brandField = _table.Fields.FirstOrDefault(x => x.Name == "Brand");
+            _sqlCommandBuilder.AddCondition(brandField, "Audi");
+            var sqlQuery = _sqlCommandBuilder.CompleteQuery();
+
+            Assert.Equal("SELECT * FROM data.Car WHERE Id = '0' and Brand = 'Audi'", sqlQuery);
+        }
+
+        [Fact]
         public void TestCreateDeleteCommand()
         {
             _sqlCommandBuilder.CreateDeleteQuery(_table);
             var sqlQuery = _sqlCommandBuilder.CompleteQuery();
 
-            Assert.Equal("DELETE * FROM data.Car".ToLower(), sqlQuery.ToLower());
+            Assert.Equal("DELETE * FROM data.Car", sqlQuery);
         }
 
         [Fact]
@@ -58,7 +73,7 @@ namespace GradoService.Persistence.Tests.CommandBuilderTest
             _sqlCommandBuilder.AddCondition(idField, "0");
             var sqlQuery = _sqlCommandBuilder.CompleteQuery();
 
-            Assert.Equal("DELETE * FROM data.Car WHERE id = '0'".ToLower(), sqlQuery.ToLower());
+            Assert.Equal("DELETE * FROM data.Car WHERE Id = '0'", sqlQuery);
         }
 
         [Fact]
@@ -67,8 +82,7 @@ namespace GradoService.Persistence.Tests.CommandBuilderTest
             _sqlCommandBuilder.CreateInsertQuery(_table, _table.Rows.FirstOrDefault());
             var sqlQuery = _sqlCommandBuilder.CompleteQuery();
 
-            Assert.Equal("INSERT INTO data.Car(Id, Brand, Cost) VALUES('0', 'Audi', '1000')".ToLower(), 
-                sqlQuery.ToLower());
+            Assert.Equal("INSERT INTO data.Car(Id, Brand, Cost) VALUES('0', 'Audi', '1000')", sqlQuery);
         }
 
         [Fact]
@@ -77,7 +91,7 @@ namespace GradoService.Persistence.Tests.CommandBuilderTest
             _sqlCommandBuilder.CreateUpdateQuery(_table, _table.Rows.FirstOrDefault());
             var sqlQuery = _sqlCommandBuilder.CompleteQuery();
 
-            Assert.Equal("UPDATE data.Car SET Id = '0', Brand = 'Audi', Cost = '1000'".ToLower(), sqlQuery.ToLower());
+            Assert.Equal("UPDATE data.Car SET Id = '0', Brand = 'Audi', Cost = '1000'", sqlQuery);
         }
 
         [Fact]
@@ -89,8 +103,7 @@ namespace GradoService.Persistence.Tests.CommandBuilderTest
             _sqlCommandBuilder.AddCondition(idField, "0");
             var sqlQuery = _sqlCommandBuilder.CompleteQuery();
 
-            Assert.Equal("UPDATE data.Car SET Id = '0', Brand = 'Audi', Cost = '1000' WHERE Id = '0'".ToLower(), 
-                sqlQuery.ToLower());
+            Assert.Equal("UPDATE data.Car SET Id = '0', Brand = 'Audi', Cost = '1000' WHERE Id = '0'", sqlQuery);
         }
 
         private Table InitializeTable()

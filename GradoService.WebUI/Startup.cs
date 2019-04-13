@@ -71,7 +71,10 @@ namespace GradoService.WebUI
 
             // Add Table Repository
             services.AddScoped<TableRepository>();
+
+            // Add sql command building
             services.AddSingleton<SqlCommandBuilder, PostgresSqlCommandBuilder>();
+            services.AddTransient<CrudCommandDirector>();
             
 
             services.AddSingleton<HttpClient>();

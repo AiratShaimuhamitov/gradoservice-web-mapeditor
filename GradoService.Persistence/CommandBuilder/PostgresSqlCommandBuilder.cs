@@ -9,6 +9,7 @@ namespace GradoService.Persistence.CommandBuilder
     public class PostgresSqlCommandBuilder : SqlCommandBuilder
     {
         private bool _isConditionAppended;
+        private bool _isOrderingAppended;
 
         public PostgresSqlCommandBuilder()
         {
@@ -24,7 +25,25 @@ namespace GradoService.Persistence.CommandBuilder
                 return;
             }
 
-            _stringBuilder.AppendFormat(" and {0} = '{1}'", field.Name, value);
+            _stringBuilder.AppendFormat(" AND {0} = '{1}'", field.Name, value);
+        }
+
+        public override void AddOrdering(Field field)
+        {
+            if(!_isOrderingAppended)
+            {
+                _isOrderingAppended = true;
+                _stringBuilder.AppendFormat(" ORDER BY {0}", field.Name);
+            }
+        }
+
+        public override void AddOrderingByDescending(Field field)
+        {
+            if (!_isOrderingAppended)
+            {
+                _isOrderingAppended = true;
+                _stringBuilder.AppendFormat(" ORDER BY {0} DESC", field.Name);
+            }
         }
 
         public override void CreateDeleteQuery(Table table)
@@ -38,18 +57,20 @@ namespace GradoService.Persistence.CommandBuilder
             _stringBuilder.Clear();
             _stringBuilder.AppendFormat("INSERT INTO {0}.{1}(", table.Schema, table.Name);
 
-            var fields = table.Fields.ToList();
-            for(int i = 0; i < fields.Count() - 1; i++)
+            var insertingFields = insertingRow.Data.Where(x => x.Value != null).Select(x => x.Key);
+            for(int i = 0; i < insertingFields.Count() - 1; i++)
             { 
-                _stringBuilder.Append(fields[i].Name + ", ");
+                _stringBuilder.Append(insertingFields.ElementAt(i).Name + ", ");
             }
-            _stringBuilder.Append(fields.Last().Name + ") ");
+            _stringBuilder.Append(insertingFields.Last().Name + ") ");
 
             _stringBuilder.Append("VALUES(");
 
-            for(int i = 0; i < insertingRow.Data.Keys.Count() - 1; i++)
+            for(int i = 0; i < insertingFields.Count() - 1; i++)
             {
-                _stringBuilder.AppendFormat("'{0}', ", insertingRow.Data.ElementAt(i).Value.ToString());
+                var value = insertingRow.Data[insertingFields.ElementAt(i)];
+                
+                _stringBuilder.AppendFormat("'{0}', ", value == null ? "" : value.ToString());
             }
             _stringBuilder.AppendFormat("'{0}')", insertingRow.Data.Last().Value.ToString());
         }
@@ -72,6 +93,11 @@ namespace GradoService.Persistence.CommandBuilder
             }
 
             _stringBuilder.AppendFormat("{0} = '{1}'", updatingRow.Data.Last().Key.Name, updatingRow.Data.Last().Value.ToString());
+        }
+
+        public override void AddReturnAffectedId(Field idField)
+        {
+            _stringBuilder.AppendFormat(" RETURNING {0}", idField.Name);
         }
 
         public override void CreateCustomQuery(string query)

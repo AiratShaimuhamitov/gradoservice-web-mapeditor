@@ -24,6 +24,12 @@ namespace GradoService.Persistence.CommandBuilder
 
         public abstract void AddCondition(Field field, string value);
 
+        public abstract void AddOrdering(Field field);
+
+        public abstract void AddOrderingByDescending(Field field);
+
+        public abstract void AddReturnAffectedId(Field field);
+
         public abstract void CreateCustomQuery(string query);
 
         public virtual string CompleteQuery()

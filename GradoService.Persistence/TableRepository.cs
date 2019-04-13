@@ -98,16 +98,16 @@ namespace GradoService.Persistence
 
             var insertQuery = _commandDirector.BuildInsertCommand(table, insertingRow);
 
-            var insertedRowId = ExecuteSqlQuery(insertQuery);
+            var insertedRowId = _dbContext.ExecuteSqlQuery(insertQuery);
 
             return insertedRowId;
         }
 
 
-        public async void UpdateData(int tableId, Row updatingRow)
+        public async Task UpdateData(int tableId, Row updatingRow)
         {
-            var tableMeta = await _dbContext.TableInfos.Where(x => x.Id == tableId)
-                .Include(x => x.FieldInfos).FirstAsync();
+            var tableMeta = _dbContext.TableInfos.Where(x => x.Id == tableId)
+                .Include(x => x.FieldInfos).First();
 
             if (tableMeta == null) throw new TableNotFoundException(tableId);
 
@@ -115,13 +115,13 @@ namespace GradoService.Persistence
 
             var updateQuery = _commandDirector.BuildUpdateCommand(table, updatingRow);
 
-            ExecuteSqlQuery(updateQuery);
+            await _dbContext.ExcecuteSqlQueryAsync(updateQuery);
         }
 
-        public async void DeleteData(int tableId, int deletingRowId)
+        public async Task DeleteData(int tableId, int deletingRowId)
         {
-            var tableMeta = await _dbContext.TableInfos.Where(x => x.Id == tableId)
-                .Include(x => x.FieldInfos).FirstAsync();
+            var tableMeta = _dbContext.TableInfos.Where(x => x.Id == tableId)
+                .Include(x => x.FieldInfos).First();
 
             if (tableMeta == null) throw new TableNotFoundException(tableId);
 
@@ -129,23 +129,9 @@ namespace GradoService.Persistence
 
             var deleteQuery = _commandDirector.BuildDeleteCommand(table, deletingRowId);
 
-            ExecuteSqlQuery(deleteQuery);
+            await _dbContext.ExcecuteSqlQueryAsync(deleteQuery);
         }
 
-        public int ExecuteSqlQuery(string query)
-        {
-            int insertedRawId = -1;
-            using (var dbConnection = _dbContext.Database.GetDbConnection())
-            {
-                using (var dbCommand = dbConnection.CreateCommand())
-                {
-                    dbCommand.CommandText = query;
-                    dbConnection.Open();
-                    object res = dbCommand.ExecuteScalar();
-                    insertedRawId = res != null ? (int) res : -1;
-                }
-            }
-            return insertedRawId;
-        }
+
     }
 }

@@ -5,6 +5,7 @@ using System.Data.Common;
 using System.Diagnostics;
 using System.Dynamic;
 using System.Text;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
 namespace GradoService.Persistence
@@ -62,6 +63,38 @@ namespace GradoService.Persistence
 
                 return queryResult;
             }
+        }
+
+        public static int ExecuteSqlQuery(this DbContext dbContext, string query)
+        {
+            int insertedRawId = -1;
+            using (var dbConnection = dbContext.Database.GetDbConnection())
+            {
+                using (var dbCommand = dbConnection.CreateCommand())
+                {
+                    dbCommand.CommandText = query;
+                    dbConnection.Open();
+                    object res = dbCommand.ExecuteScalar();
+                    insertedRawId = res != null ? (int)res : -1;
+                }
+            }
+            return insertedRawId;
+        }
+
+        public static async Task<int> ExcecuteSqlQueryAsync(this DbContext dbContext, string query)
+        {
+            int insertedRawId = -1;
+            using (var dbConnection = dbContext.Database.GetDbConnection())
+            {
+                using (var dbCommand = dbConnection.CreateCommand())
+                {
+                    dbCommand.CommandText = query;
+                    dbConnection.Open();
+                    object res = await dbCommand.ExecuteScalarAsync();
+                    insertedRawId = res != null ? (int)res : -1;
+                }
+            }
+            return insertedRawId;
         }
     }
 }

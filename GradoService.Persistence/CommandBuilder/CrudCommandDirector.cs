@@ -28,7 +28,8 @@ namespace GradoService.Persistence.CommandBuilder
         public virtual string BuildUpdateCommand(Table table, Row updatingRow)
         {
             sqlCommandBuilder.CreateUpdateQuery(table, updatingRow);
-            sqlCommandBuilder.AddCondition(table.Fields.First(x => x.Name == "gid"), updatingRow.TableId.ToString());
+            sqlCommandBuilder.AddCondition(table.Fields.First(x => x.Name == "gid"), 
+                                               updatingRow.Data.First(x => x.Key.Name == "gid").Value.ToString());
             return sqlCommandBuilder.CompleteQuery();
         }
 

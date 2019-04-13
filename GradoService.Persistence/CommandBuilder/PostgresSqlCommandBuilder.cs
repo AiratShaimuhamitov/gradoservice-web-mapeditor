@@ -87,9 +87,11 @@ namespace GradoService.Persistence.CommandBuilder
             _stringBuilder.AppendFormat("UPDATE {0}.{1} ", table.Schema, table.Name)
                 .Append("SET ");
 
-            for(int i = 0; i < updatingRow.Data.Keys.Count() - 1; i++)
+            var updatingFields = updatingRow.Data.Where(x => x.Value != null).Select(x => x.Key);
+            for (int i = 0; i < updatingFields.Count() - 1; i++)
             {
-                _stringBuilder.AppendFormat("{0} = '{1}', ", updatingRow.Data.ElementAt(i).Key.Name, updatingRow.Data.ElementAt(i).Value.ToString());
+                var field = updatingFields.ElementAt(i);
+                _stringBuilder.AppendFormat("{0} = '{1}', ", field.Name, updatingRow.Data[field].ToString());
             }
 
             _stringBuilder.AppendFormat("{0} = '{1}'", updatingRow.Data.Last().Key.Name, updatingRow.Data.Last().Value.ToString());

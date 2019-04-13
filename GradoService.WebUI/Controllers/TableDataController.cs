@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using GradoService.Application.Tables.Commands.InsertData;
 using GradoService.Application.Tables.Queries.GetTableData;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -22,15 +23,15 @@ namespace GradoService.WebUI.Controllers
         }
 
         [HttpGet("row")]
-        public JsonResult GetRow(int id)
+        public JsonResult GetRow(int tableId, int rowId)
         {
             throw new NotImplementedException();
         }
 
-        [HttpPost]
+        [HttpPut]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesDefaultResponseType]
-        public JsonResult UpdateRow(int id)
+        public JsonResult UpdateRow()
         {
             throw new NotImplementedException();
         }
@@ -43,12 +44,13 @@ namespace GradoService.WebUI.Controllers
             throw new NotImplementedException();
         }
 
-        [HttpPut]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesDefaultResponseType]
-        public JsonResult InsertRow(int id)
+        [HttpPost]
+        public async Task<JsonResult> InsertRow(int id, [FromBody]InsertDataCommand command)
         {
-            throw new NotImplementedException();
+            if (command.TableId != id) command.TableId = id;
+
+            var insertedRowId = await Mediator.Send(command);
+            return new JsonResult(insertedRowId);
         }
     }
 }

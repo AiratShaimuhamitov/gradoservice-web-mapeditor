@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using GradoService.Application.Tables.Commands.InsertData;
+using GradoService.Application.Tables.Commands.UpdateData;
 using GradoService.Application.Tables.Queries.GetTableData;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -31,9 +32,13 @@ namespace GradoService.WebUI.Controllers
         [HttpPut]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesDefaultResponseType]
-        public JsonResult UpdateRow()
+        public async Task<IActionResult> UpdateRow(int id, [FromBody]UpdateDataCommand command)
         {
-            throw new NotImplementedException();
+            if (command.TableId != id) command.TableId = id;
+
+            await Mediator.Send(command);
+
+            return NoContent();
         }
 
         [HttpDelete]

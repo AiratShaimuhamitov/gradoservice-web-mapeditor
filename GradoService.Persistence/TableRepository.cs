@@ -8,21 +8,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using GradoService.Persistence.Exceptions;
 
 namespace GradoService.Persistence
 {
-    public class TableRepository    
+    public class TableRepository
     {
         private readonly GradoServiceDbContext _dbContext;
-        private readonly SqlCommandBuilder _sqlCommandBuilder;
+        private readonly CrudCommandDirector _commandDirector;
         private readonly IMapper _mapper;
 
-        public TableRepository(GradoServiceDbContext dbContext, SqlCommandBuilder sqlCommandBuilder, IMapper mapper)
+        public TableRepository(GradoServiceDbContext dbContext, CrudCommandDirector commandDirector, IMapper mapper)
         {
             _dbContext = dbContext;
-            _sqlCommandBuilder = sqlCommandBuilder;
+            _commandDirector = commandDirector;
             _mapper = mapper;
-        } 
+        }
 
         public async Task<Table> GetTableData(int tableId)
         {
@@ -31,22 +32,19 @@ namespace GradoService.Persistence
                     .ThenInclude(x => x.FieldType)
                 .FirstAsync();
 
-            if (tableMeta == null) return null;
+            if (tableMeta == null) throw new TableNotFoundException(tableId);
 
             var table = _mapper.Map<Table>(tableMeta);
 
-//#region Replace with Director (element of builder pattern)
-//            _sqlCommandBuilder.CreateSelectQuery(table);
-//            var sqlQuery = _sqlCommandBuilder.CompleteQuery();
-//#endregion
+            var selectQuery = _commandDirector.BuildSelectCommand(table, tableMeta);
 
-            var unhandledRows = _dbContext.CollectFromExecuteSql(tableMeta.ViewQuery);
+            var unhandledRows = _dbContext.CollectFromExecuteSql(selectQuery);
 
             var rows = new List<Row>();
-            foreach(var unhandledRow in unhandledRows)
+            foreach (var unhandledRow in unhandledRows)
             {
                 var row = new Row { TableId = table.Id };
-                    
+
                 foreach (var field in table.Fields)
                 {
                     unhandledRow.TryGetValue(field.Name, out object obj);
@@ -63,25 +61,91 @@ namespace GradoService.Persistence
             return table;
         }
 
-        public Row GetTableRow(int tableId, int rowId)
+        public async Task<Row> GetTableRow(int tableId, int rowId)
         {
-            throw new NotImplementedException();
+            var tableMeta = await _dbContext.TableInfos.Where(x => x.Id == tableId)
+                .Include(x => x.FieldInfos).FirstAsync();
+
+            if (tableMeta == null) throw new TableNotFoundException(tableId);
+
+            var table = _mapper.Map<Table>(tableMeta);
+
+            var selectSpecificRowQuery = _commandDirector.BuildSelectSpecificRow(table, tableMeta, rowId);
+
+            var unhandledRow = _dbContext.CollectFromExecuteSql(selectSpecificRowQuery).First();
+
+            var row = new Row { TableId = table.Id };
+            foreach (var field in table.Fields)
+            {
+                unhandledRow.TryGetValue(field.Name, out object obj);
+                if (obj != null)
+                {
+                    row.Data[field] = obj;
+                }
+            }
+
+            return row;
         }
 
-        public void InsertData(int tableId, Row insertingRow)
+        public async Task<int> InsertData(int tableId, Row insertingRow)
         {
-            throw new NotImplementedException();
+            var tableMeta = await _dbContext.TableInfos.Where(x => x.Id == tableId)
+                .Include(x => x.FieldInfos).FirstAsync();
+
+            if (tableMeta == null) throw new TableNotFoundException(tableId);
+
+            var table = _mapper.Map<Table>(tableMeta);
+
+            var insertQuery = _commandDirector.BuildInsertCommand(table, insertingRow);
+
+            var insertedRowId = ExecuteSqlQuery(insertQuery);
+
+            return insertedRowId;
         }
 
 
-        public void UpdateData(int tableId, Row updatingRow)
+        public async void UpdateData(int tableId, Row updatingRow)
         {
-            throw new NotImplementedException();
+            var tableMeta = await _dbContext.TableInfos.Where(x => x.Id == tableId)
+                .Include(x => x.FieldInfos).FirstAsync();
+
+            if (tableMeta == null) throw new TableNotFoundException(tableId);
+
+            var table = _mapper.Map<Table>(tableMeta);
+
+            var updateQuery = _commandDirector.BuildUpdateCommand(table, updatingRow);
+
+            ExecuteSqlQuery(updateQuery);
         }
 
-        public void DeleteData(int tableId, int deletingRowId)
+        public async void DeleteData(int tableId, int deletingRowId)
         {
-            throw new NotImplementedException();
+            var tableMeta = await _dbContext.TableInfos.Where(x => x.Id == tableId)
+                .Include(x => x.FieldInfos).FirstAsync();
+
+            if (tableMeta == null) throw new TableNotFoundException(tableId);
+
+            var table = _mapper.Map<Table>(tableMeta);
+
+            var deleteQuery = _commandDirector.BuildDeleteCommand(table, deletingRowId);
+
+            ExecuteSqlQuery(deleteQuery);
+        }
+
+        public int ExecuteSqlQuery(string query)
+        {
+            int insertedRawId = -1;
+            using (var dbConnection = _dbContext.Database.GetDbConnection())
+            {
+                using (var dbCommand = dbConnection.CreateCommand())
+                {
+                    dbCommand.CommandText = query;
+                    dbConnection.Open();
+                    object res = dbCommand.ExecuteScalar();
+                    insertedRawId = res != null ? (int) res : -1;
+                }
+            }
+            return insertedRawId;
         }
     }
 }

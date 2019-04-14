@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using GradoService.Application.Tables.Commands.DeleteData;
 using GradoService.Application.Tables.Commands.InsertData;
 using GradoService.Application.Tables.Commands.UpdateData;
 using GradoService.Application.Tables.Queries.GetTableData;
@@ -24,7 +25,7 @@ namespace GradoService.WebUI.Controllers
         }
 
         [HttpGet("row")]
-        public JsonResult GetRow(int tableId, int rowId)
+        public JsonResult GetRow(int id, int rowId)
         {
             throw new NotImplementedException();
         }
@@ -44,9 +45,11 @@ namespace GradoService.WebUI.Controllers
         [HttpDelete]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesDefaultResponseType]
-        public JsonResult DeleteRow(int id)
+        public async Task<IActionResult> DeleteRow(int id, int rowId)
         {
-            throw new NotImplementedException();
+            await Mediator.Send(new DeleteDataCommand { TableId = id, RowId = rowId });
+
+            return NoContent();
         }
 
         [HttpPost]

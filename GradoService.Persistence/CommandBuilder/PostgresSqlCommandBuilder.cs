@@ -49,7 +49,7 @@ namespace GradoService.Persistence.CommandBuilder
         public override void CreateDeleteQuery(Table table)
         {
             _stringBuilder.Clear();
-            _stringBuilder.AppendFormat("DELETE * FROM {0}.{1}", table.Schema, table.Name);
+            _stringBuilder.AppendFormat("DELETE FROM {0}.{1}", table.Schema, table.Name);
         }
 
         public override void CreateInsertQuery(Table table, Row insertingRow)
@@ -106,6 +106,13 @@ namespace GradoService.Persistence.CommandBuilder
         {
             _stringBuilder.Clear();
             _stringBuilder.Append(query);
+        }
+
+        public override string CompleteQuery()
+        {
+            _isConditionAppended = false;
+            _isOrderingAppended = false;
+            return base.CompleteQuery();
         }
     }
 }

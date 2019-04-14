@@ -21,7 +21,7 @@ namespace GradoService.Persistence.CommandBuilder
         public virtual string BuildInsertCommand(Table table, Row insertingRow)
         {
             sqlCommandBuilder.CreateInsertQuery(table, insertingRow);
-            sqlCommandBuilder.AddReturnAffectedId(table.Fields.First(x => x.Name == "gid"));
+            sqlCommandBuilder.AddReturnField(table.Fields.First(x => x.Name == "gid"));
             return sqlCommandBuilder.CompleteQuery();
         }
 

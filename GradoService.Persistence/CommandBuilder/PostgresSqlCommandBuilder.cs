@@ -97,7 +97,7 @@ namespace GradoService.Persistence.CommandBuilder
             _stringBuilder.AppendFormat("{0} = '{1}'", updatingRow.Data.Last().Key.Name, updatingRow.Data.Last().Value.ToString());
         }
 
-        public override void AddReturnAffectedId(Field idField)
+        public override void AddReturnField(Field idField)
         {
             _stringBuilder.AppendFormat(" RETURNING {0}", idField.Name);
         }

@@ -12,32 +12,29 @@ namespace GradoService.Persistence.Tests.CommandBuilderTest
     {
         private Table _table;
         private SqlCommandBuilder _sqlCommandBuilder;
+        private CrudCommandDirector _crudCommandDirector;
 
         public PostrgresSqlCommandBuilderTest()
         {
             _table = InitializeTable();
             _sqlCommandBuilder = new PostgresSqlCommandBuilder();
+            _crudCommandDirector = new CrudCommandDirector(_sqlCommandBuilder);
         }
 
         [Fact]
         public void TestCreateSelectCommand()
         {
-            _sqlCommandBuilder.CreateSelectQuery(_table);
-            var sqlQuery = _sqlCommandBuilder.CompleteQuery();
+            var sqlQuery = _crudCommandDirector.BuildSelectCommand(_table);
 
-            Assert.Equal("SELECT * FROM data.Car".ToLower(), sqlQuery.ToLower());
+            Assert.Equal("SELECT * FROM data.Car ORDER BY gid", sqlQuery);
         }
 
         [Fact]
         public void TestCreateSelectCommandWithCondition()
         {
-            _sqlCommandBuilder.CreateSelectQuery(_table);
+            var sqlQuery = _crudCommandDirector.BuildSelectSpecificRow(_table, 0);
 
-            var idField = _table.Fields.FirstOrDefault(x => x.Name == "Id");
-            _sqlCommandBuilder.AddCondition(idField, "0");
-            var sqlQuery = _sqlCommandBuilder.CompleteQuery();
-
-            Assert.Equal("SELECT * FROM data.Car WHERE Id = '0'".ToLower(), sqlQuery.ToLower());
+            Assert.Equal("SELECT * FROM data.Car WHERE gid = '0'", sqlQuery);
         }
 
         [Fact]
@@ -45,14 +42,22 @@ namespace GradoService.Persistence.Tests.CommandBuilderTest
         {
             _sqlCommandBuilder.CreateSelectQuery(_table);
 
-            var idField = _table.Fields.FirstOrDefault(x => x.Name == "Id");
+            var idField = _table.Fields.FirstOrDefault(x => x.Name == "gid");
             _sqlCommandBuilder.AddCondition(idField, "0");
 
             var brandField = _table.Fields.FirstOrDefault(x => x.Name == "Brand");
             _sqlCommandBuilder.AddCondition(brandField, "Audi");
             var sqlQuery = _sqlCommandBuilder.CompleteQuery();
 
-            Assert.Equal("SELECT * FROM data.Car WHERE Id = '0' and Brand = 'Audi'", sqlQuery);
+            Assert.Equal("SELECT * FROM data.Car WHERE gid = '0' AND Brand = 'Audi'", sqlQuery);
+        }
+
+        [Fact]
+        public void TestSelectCommandWithPagination()
+        {
+            var query = _crudCommandDirector.BuildPaginationSelectCommand(_table, 10, 10);
+
+            Assert.Equal("SELECT * FROM data.Car ORDER BY gid LIMIT 10 OFFSET 10", query);
         }
 
         [Fact]
@@ -61,19 +66,15 @@ namespace GradoService.Persistence.Tests.CommandBuilderTest
             _sqlCommandBuilder.CreateDeleteQuery(_table);
             var sqlQuery = _sqlCommandBuilder.CompleteQuery();
 
-            Assert.Equal("DELETE * FROM data.Car", sqlQuery);
+            Assert.Equal("DELETE FROM data.Car", sqlQuery);
         }
 
         [Fact]
         public void TestCreateDeleteCommandWithCondition()
         {
-            _sqlCommandBuilder.CreateDeleteQuery(_table);
+            var sqlQuery = _crudCommandDirector.BuildDeleteCommand(_table, 0);
 
-            var idField = _table.Fields.FirstOrDefault(x => x.Name == "Id");
-            _sqlCommandBuilder.AddCondition(idField, "0");
-            var sqlQuery = _sqlCommandBuilder.CompleteQuery();
-
-            Assert.Equal("DELETE * FROM data.Car WHERE Id = '0'", sqlQuery);
+            Assert.Equal("DELETE FROM data.Car WHERE gid = '0'", sqlQuery);
         }
 
         [Fact]
@@ -82,7 +83,7 @@ namespace GradoService.Persistence.Tests.CommandBuilderTest
             _sqlCommandBuilder.CreateInsertQuery(_table, _table.Rows.FirstOrDefault());
             var sqlQuery = _sqlCommandBuilder.CompleteQuery();
 
-            Assert.Equal("INSERT INTO data.Car(Id, Brand, Cost) VALUES('0', 'Audi', '1000')", sqlQuery);
+            Assert.Equal("INSERT INTO data.Car(gid, Brand, Cost) VALUES('0', 'Audi', '1000')", sqlQuery);
         }
 
         [Fact]
@@ -91,24 +92,29 @@ namespace GradoService.Persistence.Tests.CommandBuilderTest
             _sqlCommandBuilder.CreateUpdateQuery(_table, _table.Rows.FirstOrDefault());
             var sqlQuery = _sqlCommandBuilder.CompleteQuery();
 
-            Assert.Equal("UPDATE data.Car SET Id = '0', Brand = 'Audi', Cost = '1000'", sqlQuery);
+            Assert.Equal("UPDATE data.Car SET gid = '0', Brand = 'Audi', Cost = '1000'", sqlQuery);
         }
 
         [Fact]
         public void TestCreateUpdateCommandWithCondition()
         {
-            _sqlCommandBuilder.CreateUpdateQuery(_table, _table.Rows.FirstOrDefault());
+            var sqlQuery = _crudCommandDirector.BuildUpdateCommand(_table, _table.Rows.FirstOrDefault());
 
-            var idField = _table.Fields.FirstOrDefault(x => x.Name == "Id");
-            _sqlCommandBuilder.AddCondition(idField, "0");
-            var sqlQuery = _sqlCommandBuilder.CompleteQuery();
+            Assert.Equal("UPDATE data.Car SET gid = '0', Brand = 'Audi', Cost = '1000' WHERE gid = '0'", sqlQuery);
+        }
+        
+        [Fact]
+        public void TestInsertCommandWithReturnAffectedId()
+        {
+            var insertingRow = _table.Rows.FirstOrDefault();
+            var query = _crudCommandDirector.BuildInsertCommand(_table, insertingRow);
 
-            Assert.Equal("UPDATE data.Car SET Id = '0', Brand = 'Audi', Cost = '1000' WHERE Id = '0'", sqlQuery);
+            Assert.Equal("INSERT INTO data.Car(gid, Brand, Cost) VALUES('0', 'Audi', '1000') RETURNING gid", query);
         }
 
         private Table InitializeTable()
         {
-            var idFeild = new Field { Name = "Id", Type = "INTEGER" };
+            var idFeild = new Field { Name = "gid", Type = "INTEGER" };
             var brandField = new Field { Name = "Brand", Type = "character varying" };
             var costFeild = new Field { Name = "Cost", Type = "numeric" };
 

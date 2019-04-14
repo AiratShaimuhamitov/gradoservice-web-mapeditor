@@ -32,7 +32,7 @@ namespace GradoService.Persistence.CommandBuilder
 
         public abstract void AddOrderingByDescending(Field field);
 
-        public abstract void AddReturnAffectedId(Field field);
+        public abstract void AddReturnField(Field field);
 
         public abstract void CreateCustomQuery(string query);
 

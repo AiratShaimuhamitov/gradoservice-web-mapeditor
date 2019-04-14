@@ -40,16 +40,54 @@ namespace GradoService.Persistence.CommandBuilder
             return sqlCommandBuilder.CompleteQuery();
         }
 
-        public virtual string BuildSelectCommand(Table table, MetaTableInfo tableMeta)
+        /// <summary>
+        /// Builds select command
+        /// </summary>
+        /// <param name="table">Table for query</param>
+        /// <param name="viewQuery">Optional select to view query, if exists will use it</param>
+        /// <returns>Select command that affects all data</returns>
+        public virtual string BuildSelectCommand(Table table, string viewQuery = null)
         {
-            sqlCommandBuilder.CreateCustomQuery(tableMeta.ViewQuery);
+            if(string.IsNullOrEmpty(viewQuery))
+            {
+                sqlCommandBuilder.CreateSelectQuery(table);
+            }
+            else
+            {
+                sqlCommandBuilder.CreateCustomQuery(viewQuery);
+            }
+
             sqlCommandBuilder.AddOrdering(table.Fields.First(x => x.Name == "gid"));
             return sqlCommandBuilder.CompleteQuery();
         }
 
-        public virtual string BuildSelectSpecificRow(Table table, MetaTableInfo tableMeta, int rowId)
+        public virtual string BuildPaginationSelectCommand(Table table, int offset, int limit, string viewQuery = null)
         {
-            sqlCommandBuilder.CreateCustomQuery(tableMeta.ViewQuery);
+            if (string.IsNullOrEmpty(viewQuery))
+            {
+                sqlCommandBuilder.CreateSelectQuery(table);
+            }
+            else
+            {
+                sqlCommandBuilder.CreateCustomQuery(viewQuery);
+            }
+
+            sqlCommandBuilder.AddOrdering(table.Fields.First(x => x.Name == "gid"));
+            sqlCommandBuilder.AddSelectLimit(limit);
+            sqlCommandBuilder.AddSelectOffset(offset);
+            return sqlCommandBuilder.CompleteQuery();
+        }
+
+        public virtual string BuildSelectSpecificRow(Table table, int rowId, string viewQuery = null)
+        {
+            if (string.IsNullOrEmpty(viewQuery))
+            {
+                sqlCommandBuilder.CreateSelectQuery(table);
+            }
+            else
+            {
+                sqlCommandBuilder.CreateCustomQuery(viewQuery);
+            }          
             sqlCommandBuilder.AddCondition(table.Fields.Where(x => x.Name == "gid").FirstOrDefault(), rowId.ToString());
             return sqlCommandBuilder.CompleteQuery();
         }

@@ -24,7 +24,7 @@ namespace GradoService.Application.Tables.Queries.GetTableData
 
         public async Task<TableDataViewModel> Handle(GetTableDataQuery request, CancellationToken cancellationToken)
         {
-            var table = await _tableRepository.GetTableData(request.TableId);
+            var table = await _tableRepository.GetTableData(request.TableId, request.Offset, request.Limit); 
 
             if(table == null)
             {

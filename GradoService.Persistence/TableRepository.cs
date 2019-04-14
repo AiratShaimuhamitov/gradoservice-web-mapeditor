@@ -25,7 +25,7 @@ namespace GradoService.Persistence
             _mapper = mapper;
         }
 
-        public async Task<Table> GetTableData(int tableId)
+        public async Task<Table> GetTableData(int tableId, int offset = 0, int limit = 0)
         {
             var tableMeta = await _dbContext.TableInfos.Where(x => x.Id == tableId)
                 .Include(x => x.FieldInfos)
@@ -36,8 +36,15 @@ namespace GradoService.Persistence
 
             var table = _mapper.Map<Table>(tableMeta);
 
-            var selectQuery = _commandDirector.BuildSelectCommand(table, tableMeta);
-
+            string selectQuery;
+            if (offset == 0 && limit == 0)
+            {
+                selectQuery = _commandDirector.BuildSelectCommand(table, tableMeta.ViewQuery);
+            }
+            else
+            {
+                selectQuery = _commandDirector.BuildPaginationSelectCommand(table, offset, limit, tableMeta.ViewQuery);
+            }
             var unhandledRows = _dbContext.CollectFromExecuteSql(selectQuery);
 
             var rows = new List<Row>();
@@ -70,7 +77,7 @@ namespace GradoService.Persistence
 
             var table = _mapper.Map<Table>(tableMeta);
 
-            var selectSpecificRowQuery = _commandDirector.BuildSelectSpecificRow(table, tableMeta, rowId);
+            var selectSpecificRowQuery = _commandDirector.BuildSelectSpecificRow(table, rowId, tableMeta.ViewQuery);
 
             var unhandledRow = _dbContext.CollectFromExecuteSql(selectSpecificRowQuery).First();
 

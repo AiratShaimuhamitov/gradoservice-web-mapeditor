@@ -17,15 +17,15 @@ namespace GradoService.WebUI.Controllers
     public class TableDataController : BaseController
     {
         [HttpGet]
-        public async Task<string> Get(int id)
+        public async Task<string> Get([FromRoute]int id, [FromQuery]int offset, [FromQuery]int limit)
         {
-            var table = await Mediator.Send(new GetTableDataQuery { TableId = id });
+            var table = await Mediator.Send(new GetTableDataQuery { TableId = id, Limit = limit, Offset = offset });
 
             return JsonConvert.SerializeObject(table, Formatting.Indented);
         }
 
         [HttpGet("row")]
-        public JsonResult GetRow(int id, int rowId)
+        public JsonResult GetRow([FromRoute]int id, int rowId)
         {
             throw new NotImplementedException();
         }
@@ -33,7 +33,7 @@ namespace GradoService.WebUI.Controllers
         [HttpPut]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesDefaultResponseType]
-        public async Task<IActionResult> UpdateRow(int id, [FromBody]UpdateDataCommand command)
+        public async Task<IActionResult> UpdateRow([FromRoute]int id, [FromBody]UpdateDataCommand command)
         {
             if (command.TableId != id) command.TableId = id;
 
@@ -45,7 +45,7 @@ namespace GradoService.WebUI.Controllers
         [HttpDelete]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesDefaultResponseType]
-        public async Task<IActionResult> DeleteRow(int id, int rowId)
+        public async Task<IActionResult> DeleteRow([FromRoute]int id, [FromQuery] int rowId)
         {
             await Mediator.Send(new DeleteDataCommand { TableId = id, RowId = rowId });
 
@@ -53,7 +53,7 @@ namespace GradoService.WebUI.Controllers
         }
 
         [HttpPost]
-        public async Task<JsonResult> InsertRow(int id, [FromBody]InsertDataCommand command)
+        public async Task<JsonResult> InsertRow([FromRoute]int id, [FromBody]InsertDataCommand command)
         {
             if (command.TableId != id) command.TableId = id;
 

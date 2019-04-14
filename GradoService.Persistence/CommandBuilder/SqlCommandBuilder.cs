@@ -26,6 +26,10 @@ namespace GradoService.Persistence.CommandBuilder
 
         public abstract void AddOrdering(Field field);
 
+        public abstract void AddSelectLimit(int limit);
+
+        public abstract void AddSelectOffset(int offset);
+
         public abstract void AddOrderingByDescending(Field field);
 
         public abstract void AddReturnAffectedId(Field field);

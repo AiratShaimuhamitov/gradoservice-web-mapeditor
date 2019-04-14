@@ -114,5 +114,15 @@ namespace GradoService.Persistence.CommandBuilder
             _isOrderingAppended = false;
             return base.CompleteQuery();
         }
+
+        public override void AddSelectLimit(int limit)
+        {
+            _stringBuilder.AppendFormat(" LIMIT {0}", limit);
+        }
+
+        public override void AddSelectOffset(int offset)
+        {
+            _stringBuilder.AppendFormat(" OFFSET {0}", offset);
+        }
     }
 }

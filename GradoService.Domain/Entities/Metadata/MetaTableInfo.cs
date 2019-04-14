@@ -2,24 +2,24 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace GradoService.Domain.Entities
+namespace GradoService.Domain.Entities.Metadata
 {
-    public class TableInfo
+    public class MetaTableInfo
     {
-        public TableInfo()
+        public MetaTableInfo()
         {
-            FieldInfos = new HashSet<TableFieldInfo>();
+            FieldInfos = new HashSet<MetaTableFieldInfo>();
         }
 
         public int Id { get; set; }
 
-        public string SchemeName { get; set; }
+        public string Schema { get; set; }
 
         public string Name { get; set; }
 
         public string PresentationName { get; set; }
 
-        public string GeomField { get; set; }
+        public string Geom { get; set; }
 
         public string StyleField { get; set; }
 
@@ -33,6 +33,6 @@ namespace GradoService.Domain.Entities
 
         public string ViewQuery { get; set; }
 
-        public ICollection<TableFieldInfo> FieldInfos { get; private set; }
+        public ICollection<MetaTableFieldInfo> FieldInfos { get; private set; }
     }
 }

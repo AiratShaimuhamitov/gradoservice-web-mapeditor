@@ -29,7 +29,7 @@ namespace GradoService.Domain.Entities.Metadata
 
         public bool DefaultStyle { get; set; }
 
-        public bool ContainsDocument { get; set; }
+        public bool ContainsFiles { get; set; }
 
         public string ViewQuery { get; set; }
 

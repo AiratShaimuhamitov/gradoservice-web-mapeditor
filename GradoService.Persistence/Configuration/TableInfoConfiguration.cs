@@ -30,7 +30,7 @@ namespace GradoService.Persistence.Configuration
 
             builder.Property(e => e.DefaultStyle).HasColumnName("default_style");
 
-            builder.Property(e => e.ContainsDocument).HasColumnName("photo");
+            builder.Property(e => e.ContainsFiles).HasColumnName("photo");
 
             builder.Property(e => e.ViewQuery).HasColumnName("sql_view_string");
         }

@@ -19,7 +19,7 @@ namespace GradoService.Application.Tables.Model
 
         public int Type { get; set; }
 
-        public bool ContainsDocument { get; set; }
+        public bool ContainsFiles { get; set; }
 
         public IEnumerable<FieldInfoDto> Fields { get; set; }
 

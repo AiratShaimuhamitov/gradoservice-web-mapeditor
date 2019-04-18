@@ -21,6 +21,7 @@ using MediatR;
 using GradoService.Application.Metadata.Queries.GetAllMetadata;
 using GradoService.Persistence.Mapping.Profiles;
 using GradoService.Persistence.CommandBuilder;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace GradoService.WebUI
 {
@@ -36,6 +37,12 @@ namespace GradoService.WebUI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            //Add Swagger
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new Info { Title = "GradoService MapEditor API", Version = "v1" });
+            });
+
             // Add AutoMapper
             services.AddAutoMapper(new Assembly[]
             {
@@ -95,6 +102,18 @@ namespace GradoService.WebUI
 
             app.UseHttpsRedirection();
             app.UseMvc();
+
+            app.UseStaticFiles();
+
+            // Enable middleware to serve generated Swagger as a JSON endpoint.
+            app.UseSwagger();
+
+            // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.), 
+            // specifying the Swagger JSON endpoint.
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "GradoService MapEditor API");
+            });
         }
     }
 }

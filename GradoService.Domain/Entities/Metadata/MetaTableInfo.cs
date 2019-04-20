@@ -33,6 +33,8 @@ namespace GradoService.Domain.Entities.Metadata
 
         public string ViewQuery { get; set; }
 
+        public MetaTableFileInfo FileInfo { get; set; }
+
         public ICollection<MetaTableFieldInfo> FieldInfos { get; private set; }
     }
 }

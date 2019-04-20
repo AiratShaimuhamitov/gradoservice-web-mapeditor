@@ -8,12 +8,12 @@ namespace GradoService.Persistence
         public GradoServiceDbContext(DbContextOptions<GradoServiceDbContext> options)
             : base(options)
         {
-            
         }
 
         public DbSet<MetaTableInfo> TableInfos { get; set; }
         public DbSet<MetaTableFieldInfo> TableFieldInfos { get; set; }
         public DbSet<MetaTableFieldType> TableFieldTypes { get; set; }
+        public DbSet<MetaTableFileInfo> TableFiles { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -25,15 +25,15 @@ namespace GradoService.Persistence.Configuration
 
             builder.Property(e => e.FieldFile).HasColumnName("photo_file");
 
-            builder.Property(e => e.IdFieldTable).HasColumnName("id_field_table");
+            builder.Property(e => e.IdFieldTable).HasColumnName("id_field_tble");
 
             builder.Ignore(e => e.ViewNameFile);
 
             builder.Ignore(e => e.ViewNamePhoto);
 
             builder.HasOne(e => e.TableInfo)
-                .WithOne(p => p.FileInfo)
-                .HasForeignKey(typeof(MetaTableFileInfo).ToString(), "id_table")
+                .WithMany(x => x.FileInfos)
+                .HasForeignKey(x => x.TableId)
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("table_photo_info_id_table_fkey");
         }

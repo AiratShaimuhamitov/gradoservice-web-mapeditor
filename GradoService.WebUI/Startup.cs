@@ -76,8 +76,9 @@ namespace GradoService.WebUI
                 return dbContextFactory.CreateDbContext(new[] {""});
             });
 
-            // Add Table Repository
+            // Add Repositories
             services.AddScoped<TableRepository>();
+            services.AddScoped<FileRepository>();
 
             // Add sql command building
             services.AddSingleton<SqlCommandBuilder, PostgresSqlCommandBuilder>();

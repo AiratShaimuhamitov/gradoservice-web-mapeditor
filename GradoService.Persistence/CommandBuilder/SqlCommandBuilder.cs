@@ -36,6 +36,8 @@ namespace GradoService.Persistence.CommandBuilder
 
         public abstract void CreateCustomQuery(string query);
 
+        public abstract void CreateViewQueryByName(Table table, string viewName);
+
         public virtual string CompleteQuery()
         {
             var result = _stringBuilder.ToString();

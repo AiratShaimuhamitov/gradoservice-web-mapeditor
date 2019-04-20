@@ -18,6 +18,8 @@ namespace GradoService.Domain.Entities.Table
 
         public string Schema { get; set; }
 
+        public string Key { get; set; }
+
         public IEnumerable<Field> Fields { get; set; }
 
         public IEnumerable<Row> Rows { get; set; }

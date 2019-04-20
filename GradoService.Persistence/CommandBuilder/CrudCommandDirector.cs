@@ -21,22 +21,22 @@ namespace GradoService.Persistence.CommandBuilder
         public virtual string BuildInsertCommand(Table table, Row insertingRow)
         {
             sqlCommandBuilder.CreateInsertQuery(table, insertingRow);
-            sqlCommandBuilder.AddReturnField(table.Fields.First(x => x.Name == "gid"));
+            sqlCommandBuilder.AddReturnField(table.Fields.First(x => x.Name == table.Key));
             return sqlCommandBuilder.CompleteQuery();
         }
 
         public virtual string BuildUpdateCommand(Table table, Row updatingRow)
         {
             sqlCommandBuilder.CreateUpdateQuery(table, updatingRow);
-            sqlCommandBuilder.AddCondition(table.Fields.First(x => x.Name == "gid"), 
-                                               updatingRow.Data.First(x => x.Key.Name == "gid").Value.ToString());
+            sqlCommandBuilder.AddCondition(table.Fields.First(x => x.Name == table.Key), 
+                                               updatingRow.Data.First(x => x.Key.Name == table.Key).Value.ToString());
             return sqlCommandBuilder.CompleteQuery();
         }
 
         public virtual string BuildDeleteCommand(Table table, int deletingRowId)
         {
             sqlCommandBuilder.CreateDeleteQuery(table);
-            sqlCommandBuilder.AddCondition(table.Fields.First(x => x.Name == "gid"), deletingRowId.ToString());
+            sqlCommandBuilder.AddCondition(table.Fields.First(x => x.Name == table.Key), deletingRowId.ToString());
             return sqlCommandBuilder.CompleteQuery();
         }
 
@@ -57,7 +57,7 @@ namespace GradoService.Persistence.CommandBuilder
                 sqlCommandBuilder.CreateCustomQuery(viewQuery);
             }
 
-            sqlCommandBuilder.AddOrdering(table.Fields.First(x => x.Name == "gid"));
+            sqlCommandBuilder.AddOrdering(table.Fields.First(x => x.Name == table.Key));
             return sqlCommandBuilder.CompleteQuery();
         }
 
@@ -72,7 +72,7 @@ namespace GradoService.Persistence.CommandBuilder
                 sqlCommandBuilder.CreateCustomQuery(viewQuery);
             }
 
-            sqlCommandBuilder.AddOrdering(table.Fields.First(x => x.Name == "gid"));
+            sqlCommandBuilder.AddOrdering(table.Fields.First(x => x.Name == table.Key));
             sqlCommandBuilder.AddSelectLimit(limit);
             sqlCommandBuilder.AddSelectOffset(offset);
             return sqlCommandBuilder.CompleteQuery();
@@ -88,8 +88,31 @@ namespace GradoService.Persistence.CommandBuilder
             {
                 sqlCommandBuilder.CreateCustomQuery(viewQuery);
             }          
-            sqlCommandBuilder.AddCondition(table.Fields.Where(x => x.Name == "gid").FirstOrDefault(), rowId.ToString());
+            sqlCommandBuilder.AddCondition(table.Fields.Where(x => x.Name == table.Key).FirstOrDefault(), rowId.ToString());
             return sqlCommandBuilder.CompleteQuery();
         }
+
+        #region TODO: needs to investigate this approach. These methods are very specefic for the file commands only. 
+        public virtual string BuildSelectViewByName(Table table, int rowId, string viewName)
+        {
+            sqlCommandBuilder.CreateViewQueryByName(table, viewName);
+            sqlCommandBuilder.AddCondition(table.Fields.Where(x => x.Name == "id_obj").FirstOrDefault(), rowId.ToString());
+            return sqlCommandBuilder.CompleteQuery();
+        }
+
+        public virtual string BuildSelectViewByName(Table table, string viewName)
+        {
+            sqlCommandBuilder.CreateViewQueryByName(table, viewName);
+            return sqlCommandBuilder.CompleteQuery();
+        }
+
+        public virtual string BuildSelectViewByName(Table table, int rowId, int fileId, string viewName)
+        {
+            sqlCommandBuilder.CreateViewQueryByName(table, viewName);
+            sqlCommandBuilder.AddCondition(table.Fields.Where(x => x.Name == "id_obj").FirstOrDefault(), rowId.ToString());
+            sqlCommandBuilder.AddCondition(table.Fields.Where(x => x.Name == table.Key).FirstOrDefault(), fileId.ToString());
+            return sqlCommandBuilder.CompleteQuery();
+        }
+        #endregion
     }
 }

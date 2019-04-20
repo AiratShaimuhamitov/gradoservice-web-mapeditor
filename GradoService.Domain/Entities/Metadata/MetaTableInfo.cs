@@ -8,6 +8,7 @@ namespace GradoService.Domain.Entities.Metadata
     {
         public MetaTableInfo()
         {
+            FileInfos = new HashSet<MetaTableFileInfo>();
             FieldInfos = new HashSet<MetaTableFieldInfo>();
         }
 
@@ -33,7 +34,9 @@ namespace GradoService.Domain.Entities.Metadata
 
         public string ViewQuery { get; set; }
 
-        public MetaTableFileInfo FileInfo { get; set; }
+        public string PkKey { get; set; }
+
+        public ICollection<MetaTableFileInfo> FileInfos { get; set; }
 
         public ICollection<MetaTableFieldInfo> FieldInfos { get; private set; }
     }

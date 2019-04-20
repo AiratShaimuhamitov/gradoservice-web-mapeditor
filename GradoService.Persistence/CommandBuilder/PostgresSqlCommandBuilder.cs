@@ -124,5 +124,11 @@ namespace GradoService.Persistence.CommandBuilder
         {
             _stringBuilder.AppendFormat(" OFFSET {0}", offset);
         }
+
+        public override void CreateViewQueryByName(Table table, string viewName)
+        {
+            _stringBuilder.Clear();
+            _stringBuilder.AppendFormat("SELECT * FROM {0}.{1}", table.Schema, viewName);
+        }
     }
 }

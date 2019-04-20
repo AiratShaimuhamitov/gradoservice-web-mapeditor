@@ -33,6 +33,8 @@ namespace GradoService.Persistence.Configuration
             builder.Property(e => e.ContainsFiles).HasColumnName("photo");
 
             builder.Property(e => e.ViewQuery).HasColumnName("sql_view_string");
+
+            builder.Property(e => e.PkKey).HasColumnName("pk_fileld");
         }
     }
 }

@@ -14,6 +14,7 @@ namespace GradoService.Persistence.Mapping
         {
             profile.CreateMap<MetaTableInfo, Table>()
                 .ForMember(t => t.Rows, m => m.Ignore())
+                .ForMember(t => t.Key, m => m.MapFrom(x => x.PkKey))
                 .ForMember(t => t.Fields, m => m.MapFrom((source, dest, destMember, context) => 
                 { return context.Mapper.Map<IEnumerable<Field>>(source.FieldInfos); }));
         }

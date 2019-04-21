@@ -1,5 +1,6 @@
 ﻿using GradoService.Application.Files.Queries.GetFileData;
 using GradoService.Application.Files.Queries.GetObjectFiles;
+using GradoService.Application.Files.Queries.GetTableFiles;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System;
@@ -15,7 +16,9 @@ namespace GradoService.WebUI.Controllers
     {
         public async Task<string> Get([FromRoute]int id)
         {
-            throw new NotImplementedException();
+            var files = await Mediator.Send(new GetTableFilesQuery { TableId = id });
+
+            return JsonConvert.SerializeObject(files, Formatting.Indented);
         }
 
         [HttpGet("info")]

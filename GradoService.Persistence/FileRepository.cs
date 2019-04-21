@@ -21,6 +21,32 @@ namespace GradoService.Persistence
             _commandDirector = commandDirector;
         }
 
+        public async Task<IEnumerable<File>> GetTableFiles(int tableId)
+        {
+            var tableFileMeta = await _dbContext.TableFiles.Where(x => x.TableId == tableId)
+                                                        .Include(x => x.TableInfo)
+                                                        .FirstOrDefaultAsync();
+            var table = GetFileTable(tableFileMeta.TableInfo.Schema, tableFileMeta.TableName);
+
+            var selectQueryPhoto = _commandDirector.BuildSelectViewByName(table, tableFileMeta.ViewNamePhoto);
+            var selectQueryFile = _commandDirector.BuildSelectViewByName(table, tableFileMeta.ViewNameFile);
+
+            var unhandledRows = _dbContext.CollectFromExecuteSql(selectQueryPhoto).ToList();
+            unhandledRows.AddRange(_dbContext.CollectFromExecuteSql(selectQueryFile).ToList());
+
+            if (unhandledRows.Count == 0) return null;
+
+            var files = new List<File>();
+
+            foreach(var unhandledRow in unhandledRows)
+            {
+                var file = TrasnformToFile(unhandledRow);
+                files.Add(file);
+            }
+
+            return files;
+        }
+
         public async Task<IEnumerable<File>> GetObjectFiles(int tableId, int objectId)
         {
             var tableFileMeta = await _dbContext.TableFiles.Where(x => x.TableId == tableId)

@@ -2,6 +2,7 @@
 using GradoService.Domain.Entities.File;
 using GradoService.Domain.Entities.Table;
 using GradoService.Persistence.CommandBuilder;
+using GradoService.Persistence.Extensions;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;

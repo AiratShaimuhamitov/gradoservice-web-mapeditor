@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using GradoService.Domain.Entities.Table;
 using GradoService.Persistence.CommandBuilder;
+using GradoService.Persistence.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;

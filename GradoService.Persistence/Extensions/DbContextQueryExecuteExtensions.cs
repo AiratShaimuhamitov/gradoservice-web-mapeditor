@@ -5,9 +5,9 @@ using System.Data.Common;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
-namespace GradoService.Persistence
+namespace GradoService.Persistence.Extensions
 {
-    public static class DbContextExtensions
+    public static class DbContextQueryExecuteExtensions
     {
         /// <summary>
         /// Select from database using ADO.net tools by sql query
@@ -15,7 +15,7 @@ namespace GradoService.Persistence
         /// <param name="dbContext">DbContext</param>
         /// <param name="sql">Sql query</param>
         /// <param name="parameters">Query parameters</param>
-        /// <returns>IEnumerable of dictionary that represents a database table</returns>
+        /// <returns>IEnumerable of dictionary that represents a table in database</returns>
         public static IEnumerable<IDictionary<string, object>> CollectFromExecuteSql(this DbContext dbContext, string sql,
              Dictionary<string, Tuple<object, DbType>> parameters = null)
         {
@@ -53,10 +53,13 @@ namespace GradoService.Persistence
             }
         }
 
+        /// <summary>
+        /// Execute custom sql query
+        /// </summary>
         public static int ExecuteSqlQuery(this DbContext dbContext, string query,
             Dictionary<string, Tuple<object, DbType>> parameters = null)
         {
-            int insertedRawId = -1;
+            int handledRowId = -1;
             using (var dbConnection = dbContext.Database.GetDbConnection())
             {
                 using (var dbCommand = dbConnection.CreateCommand())
@@ -66,16 +69,19 @@ namespace GradoService.Persistence
                     dbCommand.CommandText = query;
                     dbConnection.Open();
                     object res = dbCommand.ExecuteScalar();
-                    insertedRawId = res != null ? (int)res : -1;
+                    handledRowId = res != null ? (int)res : -1;
                 }
             }
-            return insertedRawId;
+            return handledRowId;
         }
 
+        /// <summary>
+        /// Execute custom sql query async
+        /// </summary>
         public static async Task<int> ExecuteSqlQueryAsync(this DbContext dbContext, string query,
             Dictionary<string, Tuple<object, DbType>> parameters = null)
         {
-            int insertedRawId = -1;
+            int handledRowId = -1;
             using (var dbConnection = dbContext.Database.GetDbConnection())
             {
                 using (var dbCommand = dbConnection.CreateCommand())
@@ -85,10 +91,10 @@ namespace GradoService.Persistence
                     dbCommand.CommandText = query;
                     dbConnection.Open();
                     object res = await dbCommand.ExecuteScalarAsync();
-                    insertedRawId = res != null ? (int)res : -1;
+                    handledRowId = res != null ? (int)res : -1;
                 }
             }
-            return insertedRawId;
+            return handledRowId;
         }
 
         private static void AddParameters(DbCommand command, Dictionary<string, Tuple<object, DbType>> parameters)

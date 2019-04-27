@@ -51,21 +51,23 @@ namespace GradoService.WebUI.Controllers
             return File(file.Data, file.ContentType, file.Name);
         }
 
+        [HttpGet("preview")]
+        public async Task<ActionResult> GetPreview([FromRoute] int id, [FromQuery] int objectId, [FromQuery] int fileId)
+        {
+            var file = await Mediator.Send(new GetFileDataQuery { TableId = id, ObjectId = objectId, FileId = fileId });
+
+            if (file == null || file.Preview == null || file.Preview.Length == 0) return NotFound();
+
+            return File(file.Preview, file.ContentType, file.Name);
+        }
+
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesDefaultResponseType]
-        public async Task<JsonResult> Insert([FromRoute] int id, [FromQuery] int objectId, [FromForm] IFormFile file)
+        public async Task<JsonResult> Insert([FromRoute] int id, [FromQuery] int objectId, [FromForm] IFormFile file, [FromForm] IFormFile preview)
         {
-            var data = new byte[file.Length];
-
-            if (file.Length > 0)
-            {
-                using (var ms = new MemoryStream())
-                {
-                    file.CopyTo(ms);
-                    data = ms.ToArray();
-                }
-            }
+            var data = GetDataFromFile(file);
+            var previewData = GetDataFromFile(preview);
 
             var insertFileCommand = new InsertFileCommand
             {
@@ -74,6 +76,11 @@ namespace GradoService.WebUI.Controllers
                 TableId = id,
                 ObjectId = objectId
             };
+
+            if (previewData != null)
+            {
+                insertFileCommand.Preview = previewData;
+            }
 
             var insertedId = await Mediator.Send(insertFileCommand);
 
@@ -85,16 +92,7 @@ namespace GradoService.WebUI.Controllers
         [ProducesDefaultResponseType]
         public async Task<ActionResult> Update([FromRoute] int id, [FromQuery] int fileId, [FromQuery] int objectId, [FromForm] IFormFile file)
         {
-            var data = new byte[file.Length];
-
-            if (file.Length > 0)
-            {
-                using (var ms = new MemoryStream())
-                {
-                    file.CopyTo(ms);
-                    data = ms.ToArray();
-                }
-            }
+            var data = GetDataFromFile(file);
 
             var updateFileCommand = new UpdateFileCommand
             {
@@ -117,6 +115,22 @@ namespace GradoService.WebUI.Controllers
         {
             await Mediator.Send(new DeleteFileCommand { TableId = id, FileId = fileId });
             return NoContent();
+        }
+
+        [NonAction]
+        private byte[] GetDataFromFile(IFormFile file)
+        {
+            if (file == null || file.Length == 0) return null;
+
+            var data = new byte[file.Length];
+            
+            using (var ms = new MemoryStream())
+            {
+                file.CopyTo(ms);
+                data = ms.ToArray();
+            }
+
+            return data;
         }
     }
 }

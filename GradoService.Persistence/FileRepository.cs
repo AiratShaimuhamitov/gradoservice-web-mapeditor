@@ -31,12 +31,14 @@ namespace GradoService.Persistence
                                                         .FirstOrDefaultAsync();
 
             var table = CreateFileTableInstance(tableFileMeta.TableInfo.Schema, tableFileMeta.TableName);
-            var fileRow = TransformFileToRow(file);
+            var fileRow = MapFileToRow(file);
             fileRow.Data.Remove(fileRow.Data.First(x => x.Key.Name == table.Key).Key);
 
             var insertQuery = _commandDirector.BuildInsertCommandParameterized(table, fileRow);
 
-            var queryParameters = fileRow.Data.Select(x => new KeyValuePair<string, Tuple<object, DbType>>("@" + x.Key.Name,
+            var queryParameters = fileRow.Data
+                                        .Where(x => x.Value != null)
+                                        .Select(x => new KeyValuePair<string, Tuple<object, DbType>>("@" + x.Key.Name,
                                                                                         new Tuple<object, DbType>(x.Value, x.Key.Type)))
                                         .ToDictionary(x => x.Key, v => v.Value);
 
@@ -52,11 +54,13 @@ namespace GradoService.Persistence
                                             .FirstOrDefaultAsync();
 
             var table = CreateFileTableInstance(tableFileMeta.TableInfo.Schema, tableFileMeta.TableName);
-            var fileRow = TransformFileToRow(file);
+            var fileRow = MapFileToRow(file);
 
             var updateQuery = _commandDirector.BuildUpdateCommandParameterized(table, fileRow);
 
-            var queryParameters = fileRow.Data.Select(x => new KeyValuePair<string, Tuple<object, DbType>>("@" + x.Key.Name,
+            var queryParameters = fileRow.Data
+                                        .Where(x => x.Value != null)
+                                        .Select(x => new KeyValuePair<string, Tuple<object, DbType>>("@" + x.Key.Name,
                                                                                   new Tuple<object, DbType>(x.Value, x.Key.Type)))
                                         .ToDictionary(x => x.Key, v => v.Value);
 
@@ -94,7 +98,7 @@ namespace GradoService.Persistence
 
             foreach (var unhandledRow in unhandledRows)
             {
-                var file = TrasnformRowToFile(unhandledRow);
+                var file = MapRowToFile(unhandledRow);
                 files.Add(file);
             }
 
@@ -121,7 +125,7 @@ namespace GradoService.Persistence
 
             foreach (var unhandledRow in unhandledRows)
             {
-                var file = TrasnformRowToFile(unhandledRow);
+                var file = MapRowToFile(unhandledRow);
                 files.Add(file);
             }
 
@@ -144,12 +148,12 @@ namespace GradoService.Persistence
 
             if (unhandledRow.Count == 0) return null;
 
-            var file = TrasnformRowToFile(unhandledRow.First());
+            var file = MapRowToFile(unhandledRow.First());
 
             return file;
         }
 
-        private File TrasnformRowToFile(IDictionary<string, object> row)
+        private File MapRowToFile(IDictionary<string, object> row)
         {
             var file = new File();
 
@@ -166,9 +170,9 @@ namespace GradoService.Persistence
                     case "file":
                         file.Data = (byte[])row[field];
                         break;
-                    //case "img_preview":
-                    //    file.ImagePreview = (byte[])row[field];
-                    //    break;
+                    case "img_preview":
+                        file.ImagePreview = (byte[])row[field];
+                        break;
                     case "file_name":
                         file.Name = (string)row[field];
                         break;
@@ -180,7 +184,7 @@ namespace GradoService.Persistence
             return file;
         }
 
-        private Row TransformFileToRow(File file)
+        private Row MapFileToRow(File file)
         {
             var fields = GetFileConstantFields().ToList();
 

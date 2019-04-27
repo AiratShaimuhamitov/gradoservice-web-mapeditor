@@ -25,6 +25,7 @@ namespace GradoService.Application.Files.Commands.InsertFile
                 ObjectId = request.ObjectId,
                 Name = request.FileName,
                 Data = request.Data,
+                ImagePreview = request.Preview,
                 IsPhoto = IsImage(request.FileName)
             };
 

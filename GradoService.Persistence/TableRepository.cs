@@ -3,11 +3,8 @@ using GradoService.Domain.Entities.Table;
 using GradoService.Persistence.CommandBuilder;
 using GradoService.Persistence.Extensions;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace GradoService.Persistence
@@ -103,7 +100,6 @@ namespace GradoService.Persistence
 
             return insertedRowId;
         }
-
 
         public async Task UpdateData(int tableId, Row updatingRow)
         {

@@ -12,6 +12,8 @@ namespace GradoService.Application.Files.Queries.Models
     {
         public byte[] Data { get; set; }
 
+        public byte[] Preview { get; set; }
+
         public string Name { get; set; }
 
         public string ContentType { get; set; }
@@ -19,6 +21,7 @@ namespace GradoService.Application.Files.Queries.Models
         public void CreateMappings(Profile profile)
         {
             profile.CreateMap<File, FileDataDto>()
+                .ForMember(x => x.Preview, opt => opt.MapFrom(x => x.ImagePreview))
                 .ForMember(x => x.ContentType, opt => opt.MapFrom<FileTypeResolver>());
         }
 

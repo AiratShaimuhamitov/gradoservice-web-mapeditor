@@ -14,5 +14,7 @@ namespace GradoService.Application.Files.Commands.InsertFile
         public string FileName { get; set; }
 
         public byte[] Data { get; set; }
+
+        public byte[] Preview { get; set; }
     }
 }

@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using GradoService.Persistence.Exceptions;
 
 namespace GradoService.Persistence
 {
@@ -31,8 +30,6 @@ namespace GradoService.Persistence
                 .Include(x => x.FieldInfos)
                     .ThenInclude(x => x.FieldType)
                 .FirstAsync();
-
-            if (tableMeta == null) throw new TableNotFoundException(tableId);
 
             var table = _mapper.Map<Table>(tableMeta);
 
@@ -73,8 +70,6 @@ namespace GradoService.Persistence
             var tableMeta = await _dbContext.TableInfos.Where(x => x.Id == tableId)
                 .Include(x => x.FieldInfos).FirstAsync();
 
-            if (tableMeta == null) throw new TableNotFoundException(tableId);
-
             var table = _mapper.Map<Table>(tableMeta);
 
             var selectSpecificRowQuery = _commandDirector.BuildSelectSpecificRow(table, rowId, tableMeta.ViewQuery);
@@ -99,8 +94,6 @@ namespace GradoService.Persistence
             var tableMeta = await _dbContext.TableInfos.Where(x => x.Id == tableId)
                 .Include(x => x.FieldInfos).FirstAsync();
 
-            if (tableMeta == null) throw new TableNotFoundException(tableId);
-
             var table = _mapper.Map<Table>(tableMeta);
 
             var insertQuery = _commandDirector.BuildInsertCommand(table, insertingRow);
@@ -116,13 +109,11 @@ namespace GradoService.Persistence
             var tableMeta = _dbContext.TableInfos.Where(x => x.Id == tableId)
                 .Include(x => x.FieldInfos).First();
 
-            if (tableMeta == null) throw new TableNotFoundException(tableId);
-
             var table = _mapper.Map<Table>(tableMeta);
 
             var updateQuery = _commandDirector.BuildUpdateCommand(table, updatingRow);
 
-            await _dbContext.ExcecuteSqlQueryAsync(updateQuery);
+            await _dbContext.ExecuteSqlQueryAsync(updateQuery);
         }
 
         public async Task DeleteData(int tableId, int deletingRowId)
@@ -130,15 +121,11 @@ namespace GradoService.Persistence
             var tableMeta = _dbContext.TableInfos.Where(x => x.Id == tableId)
                 .Include(x => x.FieldInfos).First();
 
-            if (tableMeta == null) throw new TableNotFoundException(tableId);
-
             var table = _mapper.Map<Table>(tableMeta);
 
             var deleteQuery = _commandDirector.BuildDeleteCommand(table, deletingRowId);
 
-            await _dbContext.ExcecuteSqlQueryAsync(deleteQuery);
+            await _dbContext.ExecuteSqlQueryAsync(deleteQuery);
         }
-
-
     }
 }

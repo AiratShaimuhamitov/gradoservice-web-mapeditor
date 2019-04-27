@@ -2,9 +2,6 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
-using System.Diagnostics;
-using System.Dynamic;
-using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
@@ -20,7 +17,7 @@ namespace GradoService.Persistence
         /// <param name="parameters">Query parameters</param>
         /// <returns>IEnumerable of dictionary that represents a database table</returns>
         public static IEnumerable<IDictionary<string, object>> CollectFromExecuteSql(this DbContext dbContext, string sql,
-            Dictionary<string, object> parameters = null)
+             Dictionary<string, Tuple<object, DbType>> parameters = null)
         {
             using (var cmd = dbContext.Database.GetDbConnection().CreateCommand())
             {
@@ -28,16 +25,7 @@ namespace GradoService.Persistence
                 if (cmd.Connection.State != ConnectionState.Open)
                     cmd.Connection.Open();
 
-                if (parameters != null)
-                {
-                    foreach (KeyValuePair<string, object> param in parameters)
-                    {
-                        DbParameter dbParameter = cmd.CreateParameter();
-                        dbParameter.ParameterName = param.Key;
-                        dbParameter.Value = param.Value;
-                        cmd.Parameters.Add(dbParameter);
-                    }
-                }
+                AddParameters(cmd, parameters);
 
                 var queryResult = new List<Dictionary<string, object>>();
                 using (var dataReader = cmd.ExecuteReader())
@@ -65,13 +53,16 @@ namespace GradoService.Persistence
             }
         }
 
-        public static int ExecuteSqlQuery(this DbContext dbContext, string query)
+        public static int ExecuteSqlQuery(this DbContext dbContext, string query,
+            Dictionary<string, Tuple<object, DbType>> parameters = null)
         {
             int insertedRawId = -1;
             using (var dbConnection = dbContext.Database.GetDbConnection())
             {
                 using (var dbCommand = dbConnection.CreateCommand())
                 {
+                    AddParameters(dbCommand, parameters);
+
                     dbCommand.CommandText = query;
                     dbConnection.Open();
                     object res = dbCommand.ExecuteScalar();
@@ -81,13 +72,16 @@ namespace GradoService.Persistence
             return insertedRawId;
         }
 
-        public static async Task<int> ExcecuteSqlQueryAsync(this DbContext dbContext, string query)
+        public static async Task<int> ExecuteSqlQueryAsync(this DbContext dbContext, string query,
+            Dictionary<string, Tuple<object, DbType>> parameters = null)
         {
             int insertedRawId = -1;
             using (var dbConnection = dbContext.Database.GetDbConnection())
             {
                 using (var dbCommand = dbConnection.CreateCommand())
                 {
+                    AddParameters(dbCommand, parameters);
+
                     dbCommand.CommandText = query;
                     dbConnection.Open();
                     object res = await dbCommand.ExecuteScalarAsync();
@@ -95,6 +89,23 @@ namespace GradoService.Persistence
                 }
             }
             return insertedRawId;
+        }
+
+        private static void AddParameters(DbCommand command, Dictionary<string, Tuple<object, DbType>> parameters)
+        {
+            if (parameters != null)
+            {
+                foreach (var param in parameters)
+                {
+                    if (param.Value.Item1 == null) continue;
+
+                    DbParameter dbParameter = command.CreateParameter();
+                    dbParameter.ParameterName = param.Key;
+                    dbParameter.DbType = param.Value.Item2;
+                    dbParameter.Value = param.Value.Item1;
+                    command.Parameters.Add(dbParameter);
+                }
+            }
         }
     }
 }

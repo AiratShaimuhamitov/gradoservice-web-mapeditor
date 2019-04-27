@@ -54,39 +54,11 @@ namespace GradoService.WebUI
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(RequestPerformanceBehaviour<,>));
             services.AddMediatR(typeof(GetAllMetadataQueryHandler).GetTypeInfo().Assembly);
 
-            services.AddMvc(options =>
-                {
-                    options.Filters.Add(typeof(ApiExceptionFilter));
-                })
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
-                .AddJsonOptions(options => {
-                    options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
-                    options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-                });
+            services.ConfigureExceptionsHandling();
 
-            services.Configure<ExternalAuthenticationConfig>(Configuration.GetSection("ExternalAuthenticationConfig"));
+            services.ConfigurePersistence();
 
-
-            services.AddSingleton<GradoServiceDbContextFactory>();
-
-            // Add DbContext using GradoServiceDbContextFactory
-            services.AddTransient(provider =>
-            {
-                var dbContextFactory = provider.GetService<GradoServiceDbContextFactory>();
-                return dbContextFactory.CreateDbContext(new[] {""});
-            });
-
-            // Add Repositories
-            services.AddScoped<TableRepository>();
-            services.AddScoped<FileRepository>();
-
-            // Add sql command building
-            services.AddSingleton<SqlCommandBuilder, PostgresSqlCommandBuilder>();
-            services.AddTransient<CrudCommandDirector>();
-            
-
-            services.AddSingleton<HttpClient>();
-            services.AddTransient<IAuthenticationService, ExternalAuthenticationService>();
+            services.ConfigureAuthentication(Configuration);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -115,6 +87,50 @@ namespace GradoService.WebUI
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "GradoService MapEditor API");
             });
+        }
+    }
+
+    public static class Configurations
+    {
+        public static void ConfigurePersistence(this IServiceCollection services)
+        {
+            services.AddSingleton<GradoServiceDbContextFactory>();
+
+            // Add DbContext using GradoServiceDbContextFactory
+            services.AddTransient(provider =>
+            {
+                var dbContextFactory = provider.GetService<GradoServiceDbContextFactory>();
+                return dbContextFactory.CreateDbContext(new[] { "" });
+            });
+
+            // Add sql commands building
+            services.AddSingleton<SqlCommandBuilder, PostgresSqlCommandBuilder>();
+            services.AddTransient<CrudCommandDirector>();
+
+            // Add Repositories
+            services.AddScoped<TableRepository>();
+            services.AddScoped<FileRepository>();
+        }
+
+        public static void ConfigureAuthentication(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.Configure<ExternalAuthenticationConfig>(configuration.GetSection("ExternalAuthenticationConfig"));
+
+            services.AddSingleton<HttpClient>();
+            services.AddTransient<IAuthenticationService, ExternalAuthenticationService>();
+        }
+
+        public static void ConfigureExceptionsHandling(this IServiceCollection services)
+        {
+            services.AddMvc(options =>
+            {
+                options.Filters.Add(typeof(ApiExceptionFilter));
+            })
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
+                .AddJsonOptions(options => {
+                    options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+                    options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                });
         }
     }
 }

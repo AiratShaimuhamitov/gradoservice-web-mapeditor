@@ -75,6 +75,27 @@ namespace GradoService.Persistence.CommandBuilder
             _stringBuilder.AppendFormat("'{0}')", insertingRow.Data.Last().Value.ToString());
         }
 
+        public override void CreateInsertQueryParameterized(Table table, Row insertingRow)
+        {
+            _stringBuilder.Clear();
+            _stringBuilder.AppendFormat("INSERT INTO {0}.{1}(", table.Schema, table.Name);
+
+            var insertingFields = insertingRow.Data.Where(x => x.Value != null).Select(x => x.Key);
+            for (int i = 0; i < insertingFields.Count() - 1; i++)
+            {
+                _stringBuilder.Append(insertingFields.ElementAt(i).Name + ", ");
+            }
+            _stringBuilder.Append(insertingFields.Last().Name + ") ");
+
+            _stringBuilder.Append("VALUES(");
+
+            for (int i = 0; i < insertingFields.Count() - 1; i++)
+            {
+                _stringBuilder.AppendFormat("@{0}, ", insertingFields.ElementAt(i).Name);
+            }
+            _stringBuilder.AppendFormat("@{0})", insertingFields.Last().Name.ToString());
+        }
+
         public override void CreateSelectQuery(Table table)
         {
             _stringBuilder.Clear();
@@ -95,6 +116,22 @@ namespace GradoService.Persistence.CommandBuilder
             }
 
             _stringBuilder.AppendFormat("{0} = '{1}'", updatingRow.Data.Last().Key.Name, updatingRow.Data.Last().Value.ToString());
+        }
+
+        public override void CreateUpdateQueryParameterized(Table table, Row updatingRow)
+        {
+            _stringBuilder.Clear();
+            _stringBuilder.AppendFormat("UPDATE {0}.{1} ", table.Schema, table.Name)
+                .Append("SET ");
+
+            var updatingFields = updatingRow.Data.Where(x => x.Value != null).Select(x => x.Key);
+            for(int i = 0; i < updatingFields.Count() - 1; i++)
+            {
+                var field = updatingFields.ElementAt(i);
+                _stringBuilder.AppendFormat("{0} = @{1}, ", field.Name, field.Name);
+            }
+
+            _stringBuilder.AppendFormat("{0} = @{1} ", updatingFields.Last().Name, updatingFields.Last().Name);
         }
 
         public override void AddReturnField(Field idField)

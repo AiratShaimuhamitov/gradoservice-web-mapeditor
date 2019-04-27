@@ -18,9 +18,23 @@ namespace GradoService.Persistence.CommandBuilder
             this.sqlCommandBuilder = sqlCommandBuilder;
         }
 
+        /// <summary>
+        /// Builds insert command with data from row
+        /// </summary>
         public virtual string BuildInsertCommand(Table table, Row insertingRow)
         {
             sqlCommandBuilder.CreateInsertQuery(table, insertingRow);
+            sqlCommandBuilder.AddReturnField(table.Fields.First(x => x.Name == table.Key));
+            return sqlCommandBuilder.CompleteQuery();
+        }
+
+
+        /// <summary>
+        /// Builds insert command without data from row. Use this command with parameters.
+        /// </summary>
+        public virtual string BuildInsertCommandParameterized(Table table, Row insertingRow)
+        {
+            sqlCommandBuilder.CreateInsertQueryParameterized(table, insertingRow);
             sqlCommandBuilder.AddReturnField(table.Fields.First(x => x.Name == table.Key));
             return sqlCommandBuilder.CompleteQuery();
         }
@@ -33,6 +47,17 @@ namespace GradoService.Persistence.CommandBuilder
             return sqlCommandBuilder.CompleteQuery();
         }
 
+        /// <summary>
+        /// Build update command without data from row. Use this command with parameters.
+        /// </summary>
+        public virtual string BuildUpdateCommandParameterized(Table table, Row updatingRow)
+        {
+            sqlCommandBuilder.CreateUpdateQueryParameterized(table, updatingRow);
+            sqlCommandBuilder.AddCondition(table.Fields.First(x => x.Name == table.Key),
+                                                 updatingRow.Data.First(x => x.Key.Name == table.Key).Value.ToString());
+            return sqlCommandBuilder.CompleteQuery();
+        }
+
         public virtual string BuildDeleteCommand(Table table, int deletingRowId)
         {
             sqlCommandBuilder.CreateDeleteQuery(table);
@@ -40,12 +65,6 @@ namespace GradoService.Persistence.CommandBuilder
             return sqlCommandBuilder.CompleteQuery();
         }
 
-        /// <summary>
-        /// Builds select command
-        /// </summary>
-        /// <param name="table">Table for query</param>
-        /// <param name="viewQuery">Optional select to view query, if exists will use it</param>
-        /// <returns>Select command that affects all data</returns>
         public virtual string BuildSelectCommand(Table table, string viewQuery = null)
         {
             if(string.IsNullOrEmpty(viewQuery))
@@ -92,7 +111,6 @@ namespace GradoService.Persistence.CommandBuilder
             return sqlCommandBuilder.CompleteQuery();
         }
 
-        #region TODO: needs to investigate this approach. These methods are very specefic for the file commands only. 
         public virtual string BuildSelectViewByName(Table table, int rowId, string viewName)
         {
             sqlCommandBuilder.CreateViewQueryByName(table, viewName);
@@ -100,12 +118,26 @@ namespace GradoService.Persistence.CommandBuilder
             return sqlCommandBuilder.CompleteQuery();
         }
 
+        /// <summary>
+        /// Builds select query for all files in table
+        /// </summary>
+        /// <param name="table">Table</param>
+        /// <param name="viewName">Name of view in database</param>
+        /// <returns>Query</returns>
         public virtual string BuildSelectViewByName(Table table, string viewName)
         {
             sqlCommandBuilder.CreateViewQueryByName(table, viewName);
             return sqlCommandBuilder.CompleteQuery();
         }
 
+        /// <summary>
+        /// Builds select query for one speceific file
+        /// </summary>
+        /// <param name="table">Table</param>
+        /// <param name="rowId">Row id</param>
+        /// <param name="fileId">File id</param>
+        /// <param name="viewName">Name of view in database</param>
+        /// <returns>Query</returns>
         public virtual string BuildSelectViewByName(Table table, int rowId, int fileId, string viewName)
         {
             sqlCommandBuilder.CreateViewQueryByName(table, viewName);
@@ -113,6 +145,5 @@ namespace GradoService.Persistence.CommandBuilder
             sqlCommandBuilder.AddCondition(table.Fields.Where(x => x.Name == table.Key).FirstOrDefault(), fileId.ToString());
             return sqlCommandBuilder.CompleteQuery();
         }
-        #endregion
     }
 }

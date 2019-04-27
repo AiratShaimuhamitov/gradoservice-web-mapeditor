@@ -18,9 +18,13 @@ namespace GradoService.Persistence.CommandBuilder
 
         public abstract void CreateUpdateQuery(Table table, Row updatingRow);
 
+        public abstract void CreateUpdateQueryParameterized(Table table, Row updatingRow);
+
         public abstract void CreateDeleteQuery(Table table);
 
         public abstract void CreateInsertQuery(Table table, Row instertingRow);
+
+        public abstract void CreateInsertQueryParameterized(Table table, Row instertingRow);
 
         public abstract void AddCondition(Field field, string value);
 

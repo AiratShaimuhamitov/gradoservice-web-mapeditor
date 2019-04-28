@@ -25,12 +25,6 @@ namespace GradoService.Application.Tables.Commands.DeleteData
 
         public async Task<Unit> Handle(DeleteDataCommand command, CancellationToken cancellationToken)
         {
-            var tableMeta = _gradoServiceDbContext.TableInfos.Where(x => x.Id == command.TableId)
-                                                                .Include(x => x.FieldInfos)
-                                                                .FirstOrDefault();
-
-            if (tableMeta == null) { throw new NotFoundException("Table", command.TableId.ToString()); }
-
             await _tableRepository.DeleteData(command.TableId, command.RowId);
 
             return Unit.Value;

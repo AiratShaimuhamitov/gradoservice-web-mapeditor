@@ -26,11 +26,6 @@ namespace GradoService.Application.Tables.Queries.GetTableData
         {
             var table = await _tableRepository.GetTableData(request.TableId, request.Offset, request.Limit); 
 
-            if(table == null)
-            {
-                throw new NotFoundException("table", request.TableId);
-            }
-
             return new TableDataViewModel()
             {
                 Table = _mapper.Map<TableDto>(table),

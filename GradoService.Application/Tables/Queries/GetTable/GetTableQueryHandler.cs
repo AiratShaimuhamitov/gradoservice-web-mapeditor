@@ -26,13 +26,10 @@ namespace GradoService.Application.Tables.Queries.GetTable
 
         public async Task<TableViewModel> Handle(GetTableQuery request, CancellationToken cancellationToken)
         {
-            var tableMeta = await _GradoServiceDbContext.TableInfos.Where(x => x.Id == request.Id)
+            var tableMeta = await _GradoServiceDbContext.TableInfos.Where(x => x.Id == request.TableId)
                                                 .Include(x => x.FieldInfos)
                                                 .SingleOrDefaultAsync();
-            if(tableMeta == null)
-            {
-                throw new NotFoundException("Table", request.Id);
-            }
+
             var table = _mapper.Map<TableInfoDto>(tableMeta);
 
             var viewModel = new TableViewModel

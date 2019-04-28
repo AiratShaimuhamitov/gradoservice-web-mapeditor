@@ -52,6 +52,7 @@ namespace GradoService.WebUI
 
             // Add MediatR
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(RequestPerformanceBehaviour<,>));
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidateTableExistsPipelineBehavior<,>));
             services.AddMediatR(typeof(GetAllMetadataQueryHandler).GetTypeInfo().Assembly);
 
             services.ConfigureExceptionsHandling();

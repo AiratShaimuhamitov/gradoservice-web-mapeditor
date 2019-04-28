@@ -1,11 +1,9 @@
-﻿using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using GradoService.Application.Interfaces;
+using MediatR;
 
 namespace GradoService.Application.Tables.Queries.GetTableData
 {
-    public class GetTableDataQuery : IRequest<TableDataViewModel>
+    public class GetTableDataQuery : IRequest<TableDataViewModel>, ITableRequest
     {
         public int TableId { get; set; }
 

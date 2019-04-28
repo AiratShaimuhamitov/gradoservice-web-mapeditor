@@ -32,8 +32,6 @@ namespace GradoService.Application.Tables.Commands.UpdateData
                                                                .Include(x => x.FieldInfos)
                                                                .FirstOrDefaultAsync();
 
-            if (tableMeta == null) { throw new NotFoundException("Table", command.TableId.ToString()); }
-
             var dataDict = new Dictionary<Field, object>();
 
             foreach (var fieldMeta in tableMeta.FieldInfos)

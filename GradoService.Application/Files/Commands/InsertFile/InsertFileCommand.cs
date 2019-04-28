@@ -1,11 +1,12 @@
-﻿using MediatR;
+﻿using GradoService.Application.Interfaces;
+using MediatR;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace GradoService.Application.Files.Commands.InsertFile
 {
-    public class InsertFileCommand : IRequest<int>
+    public class InsertFileCommand : IRequest<int>, ITableRequest
     {
         public int TableId { get; set; }
 

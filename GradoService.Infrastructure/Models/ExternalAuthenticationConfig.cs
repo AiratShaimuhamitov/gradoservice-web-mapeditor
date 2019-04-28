@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace GradoService.Application.ConfigurationModels
+namespace GradoService.Infrastructure.Models
 {
     public class ExternalAuthenticationConfig
     {

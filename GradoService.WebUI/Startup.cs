@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using System.Net.Http;
-using GradoService.Application.ConfigurationModels;
+using GradoService.Infrastructure.Models;
 using GradoService.Application.Interfaces;
 using GradoService.Infrastructure.Services;
 using GradoService.Persistence;

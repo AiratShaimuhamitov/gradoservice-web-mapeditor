@@ -49,6 +49,7 @@ namespace GradoService.WebUI
             {
                 Log.Logger = new LoggerConfiguration()
                     .WriteTo.RollingFile("logs\\log-{Date}.log")
+                    .WriteTo.Console()
                     .CreateLogger();
 
                 if (hostingContext.HostingEnvironment.IsDevelopment())

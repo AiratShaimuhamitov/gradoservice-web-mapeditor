@@ -3,7 +3,7 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using GradoService.Application.ConfigurationModels;
+using GradoService.Infrastructure.Models;
 using GradoService.Application.Exceptions;
 using GradoService.Application.Interfaces;
 using GradoService.Application.Model;

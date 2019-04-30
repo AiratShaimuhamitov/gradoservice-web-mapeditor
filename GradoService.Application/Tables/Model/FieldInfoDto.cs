@@ -12,10 +12,9 @@ namespace GradoService.Application.Tables.Model
 
         public void CreateMappings(Profile configuration)
         {
-            configuration.CreateMap<
-                MetaTableFieldInfo, FieldInfoDto>()
+            configuration.CreateMap<MetaTableFieldInfo, FieldInfoDto>()
                 .ForMember(tfDTO => tfDTO.Name, x => x.MapFrom(m => m.PresentationName))
-                .ForMember(tfDTO => tfDTO.FieldType, x => x.MapFrom(m => m.FieldType.Name));
+                .ForMember(tfDTO => tfDTO.FieldType, x => x.MapFrom(m => m.FieldType.Type));
         }
     }
 }

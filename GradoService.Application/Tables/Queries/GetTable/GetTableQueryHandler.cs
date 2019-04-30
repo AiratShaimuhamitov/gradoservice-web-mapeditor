@@ -28,6 +28,7 @@ namespace GradoService.Application.Tables.Queries.GetTable
         {
             var tableMeta = await _GradoServiceDbContext.TableInfos.Where(x => x.Id == request.TableId)
                                                 .Include(x => x.FieldInfos)
+                                                    .ThenInclude(x => x.FieldType)
                                                 .SingleOrDefaultAsync();
 
             var table = _mapper.Map<TableInfoDto>(tableMeta);

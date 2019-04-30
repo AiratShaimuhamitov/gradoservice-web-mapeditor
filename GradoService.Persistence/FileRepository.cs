@@ -38,8 +38,7 @@ namespace GradoService.Persistence
 
             var queryParameters = fileRow.Data
                                         .Where(x => x.Value != null)
-                                        .Select(x => new KeyValuePair<string, Tuple<object, DbType>>("@" + x.Key.Name,
-                                                                                        new Tuple<object, DbType>(x.Value, x.Key.Type)))
+                                        .Select(x => new KeyValuePair<string, object>("@" + x.Key.Name, x.Value))
                                         .ToDictionary(x => x.Key, v => v.Value);
 
             var insertedRowId = await _dbContext.ExecuteSqlQueryAsync(insertQuery, queryParameters);
@@ -60,8 +59,7 @@ namespace GradoService.Persistence
 
             var queryParameters = fileRow.Data
                                         .Where(x => x.Value != null)
-                                        .Select(x => new KeyValuePair<string, Tuple<object, DbType>>("@" + x.Key.Name,
-                                                                                  new Tuple<object, DbType>(x.Value, x.Key.Type)))
+                                        .Select(x => new KeyValuePair<string, object>("@" + x.Key.Name, x.Value))
                                         .ToDictionary(x => x.Key, v => v.Value);
 
             await _dbContext.ExecuteSqlQueryAsync(updateQuery, queryParameters);
@@ -168,10 +166,10 @@ namespace GradoService.Persistence
                         file.ObjectId = (int)row[field];
                         break;
                     case "file":
-                        file.Data = (byte[])row[field];
+                        file.Data = row[field] as byte[];
                         break;
                     case "img_preview":
-                        file.ImagePreview = (byte[])row[field];
+                        file.ImagePreview = row[field] as byte[];
                         break;
                     case "file_name":
                         file.Name = (string)row[field];
@@ -222,12 +220,12 @@ namespace GradoService.Persistence
         {
             var fields = new List<Field>
             {
-                new Field { Id = 0, Name = "id", Type = DbType.Int32 },
-                new Field { Id = 1, Name = "id_obj", Type = DbType.Int32 },
-                new Field { Id = 2, Name = "file", Type = DbType.Binary},
-                new Field { Id = 3, Name = "img_preview", Type = DbType.Binary},
-                new Field { Id = 4, Name = "file_name", Type = DbType.String},
-                new Field { Id = 5, Name = "is_photo", Type = DbType.Boolean}
+                new Field { Id = 0, Name = "id", Type = "INTEGER" },
+                new Field { Id = 1, Name = "id_obj", Type = "INTEGER" },
+                new Field { Id = 2, Name = "file", Type = "bytea"},
+                new Field { Id = 3, Name = "img_preview", Type = "bytea"},
+                new Field { Id = 4, Name = "file_name", Type = "character varying"},
+                new Field { Id = 5, Name = "is_photo", Type = "boolean" }
             };
 
             return fields;

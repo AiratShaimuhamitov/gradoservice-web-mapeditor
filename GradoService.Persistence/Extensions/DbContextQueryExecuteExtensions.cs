@@ -4,7 +4,6 @@ using System.Data;
 using System.Data.Common;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-
 namespace GradoService.Persistence.Extensions
 {
     public static class DbContextQueryExecuteExtensions
@@ -17,7 +16,7 @@ namespace GradoService.Persistence.Extensions
         /// <param name="parameters">Query parameters</param>
         /// <returns>IEnumerable of dictionary that represents a table in database</returns>
         public static IEnumerable<IDictionary<string, object>> CollectFromExecuteSql(this DbContext dbContext, string sql,
-             Dictionary<string, Tuple<object, DbType>> parameters = null)
+             Dictionary<string, object> parameters = null)
         {
             using (var cmd = dbContext.Database.GetDbConnection().CreateCommand())
             {
@@ -57,7 +56,7 @@ namespace GradoService.Persistence.Extensions
         /// Execute custom sql query
         /// </summary>
         public static int ExecuteSqlQuery(this DbContext dbContext, string query,
-            Dictionary<string, Tuple<object, DbType>> parameters = null)
+            Dictionary<string, object> parameters = null)
         {
             int handledRowId = -1;
             using (var dbConnection = dbContext.Database.GetDbConnection())
@@ -79,7 +78,7 @@ namespace GradoService.Persistence.Extensions
         /// Execute custom sql query async
         /// </summary>
         public static async Task<int> ExecuteSqlQueryAsync(this DbContext dbContext, string query,
-            Dictionary<string, Tuple<object, DbType>> parameters = null)
+            Dictionary<string, object> parameters = null)
         {
             int handledRowId = -1;
             using (var dbConnection = dbContext.Database.GetDbConnection())
@@ -97,18 +96,17 @@ namespace GradoService.Persistence.Extensions
             return handledRowId;
         }
 
-        private static void AddParameters(DbCommand command, Dictionary<string, Tuple<object, DbType>> parameters)
+        private static void AddParameters(DbCommand command, Dictionary<string, object> parameters)
         {
             if (parameters != null)
             {
                 foreach (var param in parameters)
                 {
-                    if (param.Value.Item1 == null) continue;
+                    if (param.Value == null) continue;
 
-                    DbParameter dbParameter = command.CreateParameter();
+                    var dbParameter = command.CreateParameter();
                     dbParameter.ParameterName = param.Key;
-                    dbParameter.DbType = param.Value.Item2;
-                    dbParameter.Value = param.Value.Item1;
+                    dbParameter.Value = param.Value;
                     command.Parameters.Add(dbParameter);
                 }
             }

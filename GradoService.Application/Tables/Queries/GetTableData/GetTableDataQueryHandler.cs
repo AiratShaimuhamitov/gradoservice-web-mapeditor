@@ -5,32 +5,27 @@ using GradoService.Persistence;
 using MediatR;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace GradoService.Application.Tables.Queries.GetTableData
 {
-    public class GetTableDataQueryHandler : IRequestHandler<GetTableDataQuery, TableDataViewModel>
+    public class GetTableDataQueryHandler : IRequestHandler<GetTableDataQuery, IEnumerable<IDictionary<string, object>>>
     {
         private readonly TableRepository _tableRepository;
-        private readonly IMapper _mapper;
 
-        public GetTableDataQueryHandler(TableRepository tableRepository, IMapper mapper)
+        public GetTableDataQueryHandler(TableRepository tableRepository)
         {
             _tableRepository = tableRepository;
-            _mapper = mapper;
         }
 
-        public async Task<TableDataViewModel> Handle(GetTableDataQuery request, CancellationToken cancellationToken)
+        public async Task<IEnumerable<IDictionary<string, object>>> Handle(GetTableDataQuery request, CancellationToken cancellationToken)
         {
-            var table = await _tableRepository.GetTableData(request.TableId, request.Offset, request.Limit); 
+            var table = await _tableRepository.GetTableData(request.TableId, request.Offset, request.Limit);
 
-            return new TableDataViewModel()
-            {
-                Table = _mapper.Map<TableDto>(table),
-                CreateEnabled = true
-            };
+            return table.Rows.Select(x => x.Data.ToDictionary(k => k.Key.Name, v => v.Value));
         }
     }
 }

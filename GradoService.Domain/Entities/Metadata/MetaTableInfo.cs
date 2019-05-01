@@ -34,6 +34,8 @@ namespace GradoService.Domain.Entities.Metadata
 
         public string ViewQuery { get; set; }
 
+        public string ViewName { get; set; }
+
         public string PkKey { get; set; }
 
         public ICollection<MetaTableFileInfo> FileInfos { get; set; }

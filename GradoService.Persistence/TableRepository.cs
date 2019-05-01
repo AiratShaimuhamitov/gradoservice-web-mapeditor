@@ -34,11 +34,11 @@ namespace GradoService.Persistence
             string selectQuery;
             if (offset == 0 && limit == 0)
             {
-                selectQuery = _commandDirector.BuildSelectCommand(table, tableMeta.ViewQuery);
+                selectQuery = _commandDirector.BuildSelectViewByName(table, tableMeta.ViewName);
             }
             else
             {
-                selectQuery = _commandDirector.BuildPaginationSelectCommand(table, offset, limit, tableMeta.ViewQuery);
+                selectQuery = _commandDirector.BuildPaginationSelectViewByName(table, offset, limit, tableMeta.ViewName);
             }
             var unhandledRows = _dbContext.CollectFromExecuteSql(selectQuery);
 

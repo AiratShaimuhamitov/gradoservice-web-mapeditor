@@ -34,6 +34,8 @@ namespace GradoService.Persistence.Configuration
 
             builder.Property(e => e.ViewQuery).HasColumnName("sql_view_string");
 
+            builder.Property(e => e.ViewName).HasColumnName("view_name");
+
             builder.Property(e => e.PkKey).HasColumnName("pk_fileld");
         }
     }

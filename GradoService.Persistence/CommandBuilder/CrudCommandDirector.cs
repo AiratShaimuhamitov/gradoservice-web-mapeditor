@@ -130,6 +130,23 @@ namespace GradoService.Persistence.CommandBuilder
             return sqlCommandBuilder.CompleteQuery();
         }
 
+        public virtual string BuildPaginationSelectViewByName(Table table, int offset, int limit, string viewName = null)
+        {
+            if (string.IsNullOrEmpty(viewName))
+            {
+                sqlCommandBuilder.CreateSelectQuery(table);
+            }
+            else
+            {
+                sqlCommandBuilder.CreateViewQueryByName(table, viewName);
+            }
+
+            sqlCommandBuilder.AddOrdering(table.Fields.First(x => x.Name == table.Key));
+            sqlCommandBuilder.AddSelectLimit(limit);
+            sqlCommandBuilder.AddSelectOffset(offset);
+            return sqlCommandBuilder.CompleteQuery();
+        }
+
         /// <summary>
         /// Builds select query for one speceific file
         /// </summary>

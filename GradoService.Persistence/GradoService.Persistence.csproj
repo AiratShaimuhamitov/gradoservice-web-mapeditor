@@ -12,6 +12,7 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.2.0" />
     <PackageReference Include="NetTopologySuite.IO.PostGis" Version="1.15.0" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="2.2.0" />
+    <PackageReference Include="Npgsql.NetTopologySuite" Version="4.0.6" />
   </ItemGroup>
 
   <ItemGroup>

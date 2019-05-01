@@ -14,6 +14,7 @@ namespace GradoService.Persistence
         public DbSet<MetaTableFieldInfo> TableFieldInfos { get; set; }
         public DbSet<MetaTableFieldType> TableFieldTypes { get; set; }
         public DbSet<MetaTableFileInfo> TableFiles { get; set; }
+        public DbSet<MetaTableGeomType> TableGeomTypes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

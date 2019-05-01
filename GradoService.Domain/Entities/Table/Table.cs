@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NetTopologySuite.Geometries;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -10,6 +11,7 @@ namespace GradoService.Domain.Entities.Table
         {
             Fields = new List<Field>();
             Rows = new List<Row>();
+            Geomerties = new Dictionary<int, Geometry>();
         }
 
         public int Id { get; set; }
@@ -20,8 +22,12 @@ namespace GradoService.Domain.Entities.Table
 
         public string Key { get; set; }
 
+        public string Geom { get; set; }
+
         public IEnumerable<Field> Fields { get; set; }
 
         public IEnumerable<Row> Rows { get; set; }
+
+        public IDictionary<int, Geometry> Geomerties { get; set; }
     }
 }

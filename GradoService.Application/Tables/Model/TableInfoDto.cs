@@ -13,9 +13,9 @@ namespace GradoService.Application.Tables.Model
 
         public string PresentationName { get; set; }
 
-        public string Geom { get; set; }
+        public int GeomTypeId { get; set; }
 
-        public int GeomType { get; set; }
+        public string GeomType { get; set; }
 
         public int Type { get; set; }
 
@@ -26,6 +26,7 @@ namespace GradoService.Application.Tables.Model
         public void CreateMappings(Profile configuration)
         {
             configuration.CreateMap<MetaTableInfo, TableInfoDto>()
+                .ForMember(tDTO => tDTO.GeomType,  x => x.MapFrom(p => p.GeomType.Type))
                 .ForMember(tDTO => tDTO.Fields, x => x.MapFrom<FieldsResolver>());
         }
 

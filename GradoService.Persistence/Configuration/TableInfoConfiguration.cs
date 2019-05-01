@@ -24,7 +24,7 @@ namespace GradoService.Persistence.Configuration
 
             builder.Property(e => e.StyleField).HasColumnName("style_field");
 
-            builder.Property(e => e.GeomType).HasColumnName("geom_type");
+            builder.Property(e => e.GeomTypeId).HasColumnName("geom_type");
 
             builder.Property(e => e.Type).HasColumnName("type");
 
@@ -37,6 +37,12 @@ namespace GradoService.Persistence.Configuration
             builder.Property(e => e.ViewName).HasColumnName("view_name");
 
             builder.Property(e => e.PkKey).HasColumnName("pk_fileld");
+
+            builder
+                .HasOne(e => e.GeomType)
+                .WithOne(e => e.TableInfo)
+                .HasForeignKey<MetaTableInfo>(x => x.GeomTypeId)
+                .HasConstraintName("table_info_geom_type_fkey");
         }
     }
 }

@@ -24,7 +24,7 @@ namespace GradoService.Domain.Entities.Metadata
 
         public string StyleField { get; set; }
 
-        public int GeomType { get; set; }
+        public int GeomTypeId { get; set; }
 
         public int Type { get; set; }
 
@@ -37,6 +37,8 @@ namespace GradoService.Domain.Entities.Metadata
         public string ViewName { get; set; }
 
         public string PkKey { get; set; }
+
+        public MetaTableGeomType GeomType { get; set; }
 
         public ICollection<MetaTableFileInfo> FileInfos { get; set; }
 

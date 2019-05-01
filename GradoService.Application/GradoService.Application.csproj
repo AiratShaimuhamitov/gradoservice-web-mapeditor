@@ -16,6 +16,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="NetTopologySuite.IO.PostGis" Version="1.15.0" />
   </ItemGroup>
 
 </Project>

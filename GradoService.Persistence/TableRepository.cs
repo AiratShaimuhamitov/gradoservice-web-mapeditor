@@ -3,6 +3,7 @@ using GradoService.Domain.Entities.Table;
 using GradoService.Persistence.CommandBuilder;
 using GradoService.Persistence.Extensions;
 using Microsoft.EntityFrameworkCore;
+using NetTopologySuite.Geometries;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -42,25 +43,44 @@ namespace GradoService.Persistence
             }
             var unhandledRows = _dbContext.CollectFromExecuteSql(selectQuery);
 
+            FillDataToTable(table, unhandledRows);
+
+            return table;
+        }
+
+        private void FillDataToTable(Table table, IEnumerable<IDictionary<string, object>> unhandledRows)
+        {
             var rows = new List<Row>();
+            var geometries = new Dictionary<int, Geometry>();
             foreach (var unhandledRow in unhandledRows)
             {
                 var row = new Row { TableId = table.Id };
+                var keyId = (int)unhandledRow[table.Key];
 
                 foreach (var field in table.Fields)
                 {
                     unhandledRow.TryGetValue(field.Name, out object obj);
-                    if (obj != null)
+
+                    if (field.Name == table.Geom)
                     {
-                        row.Data[field] = obj;
+                        if (obj is Geometry)
+                        {
+                            geometries.Add(keyId, (Geometry) obj);
+                        }
+                        else
+                        {
+                            geometries.Add(keyId, null);
+                        }
+                        continue;
                     }
+
+                    row.Data[field] = obj;
                 }
                 rows.Add(row);
             }
 
             table.Rows = rows;
-
-            return table;
+            table.Geomerties = geometries;
         }
 
         public async Task<Row> GetTableRow(int tableId, int rowId)

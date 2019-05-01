@@ -27,6 +27,7 @@ namespace GradoService.Application.Tables.Queries.GetTable
         public async Task<TableViewModel> Handle(GetTableQuery request, CancellationToken cancellationToken)
         {
             var tableMeta = await _GradoServiceDbContext.TableInfos.Where(x => x.Id == request.TableId)
+                                                .Include(x => x.GeomType)
                                                 .Include(x => x.FieldInfos)
                                                     .ThenInclude(x => x.FieldType)
                                                 .SingleOrDefaultAsync();

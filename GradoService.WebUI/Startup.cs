@@ -10,10 +10,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
-using Serilog;
 using System.Reflection;
 using GradoService.Application.Infrastructure;
 using GradoService.Application.Infrastructure.AutoMapper;
@@ -22,6 +20,8 @@ using GradoService.Application.Metadata.Queries.GetAllMetadata;
 using GradoService.Persistence.Mapping.Profiles;
 using GradoService.Persistence.CommandBuilder;
 using Swashbuckle.AspNetCore.Swagger;
+using MediatR.Pipeline;
+using Npgsql;
 
 namespace GradoService.WebUI
 {
@@ -51,8 +51,9 @@ namespace GradoService.WebUI
             });
 
             // Add MediatR
+            //services.AddTransient(typeof(IPipelineBehavior<,>), typeof(RequestPreProcessorBehavior<,>));
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(RequestPerformanceBehaviour<,>));
-            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidateTableExistsPipelineBehavior<,>));
+            //services.AddTransient(typeof(IPipelineBehavior<,>), typeof(RequestValidationBehavior<,>));
             services.AddMediatR(typeof(GetAllMetadataQueryHandler).GetTypeInfo().Assembly);
 
             services.ConfigureExceptionsHandling();
@@ -95,6 +96,8 @@ namespace GradoService.WebUI
     {
         public static void ConfigurePersistence(this IServiceCollection services)
         {
+
+            NpgsqlConnection.GlobalTypeMapper.UseNetTopologySuite();
             services.AddSingleton<GradoServiceDbContextFactory>();
 
             // Add DbContext using GradoServiceDbContextFactory
@@ -128,7 +131,8 @@ namespace GradoService.WebUI
                 options.Filters.Add(typeof(ApiExceptionFilter));
             })
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
-                .AddJsonOptions(options => {
+                .AddJsonOptions(options =>
+                {
                     options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
                     options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
                 });
